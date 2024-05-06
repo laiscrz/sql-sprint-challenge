@@ -355,3 +355,62 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Cliente: ' || v_nome_cliente || ', Pesquisa: ' || v_id_pesquisa || ', Localização: ' || v_cidade);
     END LOOP;
 END;
+
+-- FUNÇÕES DE VALIDAÇÃO DE DADOS
+
+-- Primeira função para validar entrada de dados: idade do cliente
+/* Esta função valida se a idade do cliente é maior ou igual a 18 anos, 
+como requisito para cadastro, conforme estabelecido pela regra de negócio.*/
+DROP FUNCTION validar_idade_cliente;
+CREATE OR REPLACE FUNCTION validar_idade_cliente(idade_cliente NUMBER) RETURN BOOLEAN IS
+BEGIN
+    IF idade_cliente >= 18 THEN
+        RETURN TRUE;
+    ELSE
+        RETURN FALSE;
+    END IF;
+END;
+
+-- Segunda funcao para validar entrada de dados 
+/* Esta função valida se o valor do produto é maior que zero, 
+garantindo que apenas valores válidos sejam inseridos no banco de dados.*/
+DROP FUNCTION validar_valor_produto;
+CREATE OR REPLACE FUNCTION validar_valor_produto(valor_produto NUMBER) RETURN BOOLEAN IS
+BEGIN
+    IF valor_produto > 0 THEN
+        RETURN TRUE;
+    ELSE
+        RETURN FALSE;
+    END IF;
+END;
+
+-- Bloco PL/SQL com exemplo de uso das funções de validação
+DECLARE
+    v_idade_cliente cliente.idade%TYPE := &idadeCliente;
+    v_valor_produto produto.valorproduto%TYPE := &valorProduto;
+BEGIN
+    IF v_idade_cliente < 18 THEN
+        DBMS_OUTPUT.PUT_LINE('A idade do cliente não é válida.');
+    ELSE
+        BEGIN
+            INSERT INTO Cliente (idCliente, nome, telefone, email, idade, genero, estadoCivil, idLocalizacao, nivelRenda, nivelEducacao, formaPagamentoPref) 
+            VALUES (1, 'Maria', '123456789', 'maria@maria.com', v_idade_cliente, 'Feminino', 'Casado(a)', 201, 1000.00, 'Fundamental', 'Boleto');
+        EXCEPTION
+            WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT_LINE('Ocorreu um erro ao inserir dados do cliente.');
+        END;
+    END IF;
+
+    IF v_valor_produto <= 0 THEN
+        DBMS_OUTPUT.PUT_LINE('O valor do produto não é válido.');
+    ELSE
+        BEGIN
+            INSERT INTO Produto (idProduto, nomeProduto, estrelas, categoriaProduto, qtdEstoque, dataCompraProduto, valorProduto) 
+            VALUES (1, 'Maquiagem', 5, 'Cosméticos', 10, SYSDATE, v_valor_produto);
+        EXCEPTION
+            WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT_LINE('Ocorreu um erro ao inserir dados do produto.');
+        END;
+    END IF;
+    COMMIT;
+END;
