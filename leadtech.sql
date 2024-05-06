@@ -416,8 +416,14 @@ BEGIN
 END;
 
 
+
 -- CRIAÇÃO DE PROCEDURES DAS TABELAS => INSERT, DELETE E UPDATE
+
 /* PESQUISA*/
+-- DROP das procedures relacionadas à tabela pesquisa
+DROP PROCEDURE inserir_pesquisa;
+DROP PROCEDURE atualizar_pesquisa;
+DROP PROCEDURE excluir_pesquisa;
 -- Procedure para inserir uma nova pesquisa na tabela pesquisa
 CREATE OR REPLACE PROCEDURE inserir_pesquisa(p_idpesquisa IN NUMBER,p_palavrachave IN VARCHAR2)
 AS BEGIN
@@ -447,6 +453,10 @@ END;
 
 
 /*LOCALIZACAOGEOGRAFICA*/
+-- DROP das procedures relacionadas à tabela localizacaogeografica
+DROP PROCEDURE inserir_localizacao_geografica;
+DROP PROCEDURE atualizar_localizacao_geografica;
+DROP PROCEDURE excluir_localizacao_geografica;
 -- Procedure para inserir uma nova localização geográfica na tabela localizacaogeografica
 CREATE OR REPLACE PROCEDURE inserir_localizacao_geografica(
     p_idlocalizacao IN NUMBER,
@@ -488,6 +498,10 @@ END;
 
 
 /*CLIENTE*/
+-- DROP das procedures relacionadas à tabela cliente
+DROP PROCEDURE inserir_cliente;
+DROP PROCEDURE atualizar_cliente;
+DROP PROCEDURE excluir_cliente;
 -- Procedure para inserir um novo cliente na tabela cliente
 CREATE OR REPLACE PROCEDURE inserir_cliente(
     p_idcliente IN NUMBER,
@@ -546,6 +560,10 @@ AS BEGIN
 END;
 
 /*PRODUTO*/
+-- DROP das procedures relacionadas à tabela produto
+DROP PROCEDURE inserir_produto;
+DROP PROCEDURE atualizar_produto;
+DROP PROCEDURE excluir_produto;
 -- Procedure para inserir um novo produto na tabela produto
 CREATE OR REPLACE PROCEDURE inserir_produto(
     p_idproduto IN NUMBER,
@@ -593,6 +611,10 @@ END;
 
 
 /*FORNECEDOR*/
+-- DROP das procedures relacionadas à tabela fornecedor
+DROP PROCEDURE inserir_fornecedor;
+DROP PROCEDURE atualizar_fornecedor;
+DROP PROCEDURE excluir_fornecedor;
 -- Procedure para inserir um novo fornecedor na tabela fornecedor
 CREATE OR REPLACE PROCEDURE inserir_fornecedor(
     p_idfornecedor IN NUMBER,
@@ -627,6 +649,52 @@ AS BEGIN
 END;
 
 /*CLIENTE_PRODUTO*/
+-- Drop das stored procedures relacionadas à tabela Cliente_Produto
+DROP PROCEDURE inserir_cliente_produto;
+DROP PROCEDURE atualizar_cliente_produto;
+DROP PROCEDURE excluir_cliente_produto;
+-- Procedure para inserir uma nova entrada na tabela Cliente_Produto
+CREATE OR REPLACE PROCEDURE inserir_cliente_produto(
+    p_idcliente IN NUMBER,
+    p_idproduto IN NUMBER
+)
+AS BEGIN
+    INSERT INTO Cliente_Produto (idCliente, idProduto) 
+    VALUES (p_idcliente, p_idproduto);
+    COMMIT;
+END;
+
+-- Procedure para atualizar uma entrada na tabela Cliente_Produto
+CREATE OR REPLACE PROCEDURE atualizar_cliente_produto(
+    p_idcliente IN NUMBER,
+    p_idproduto IN NUMBER,
+    p_novoidcliente IN NUMBER,
+    p_novoidproduto IN NUMBER
+)
+AS BEGIN
+    UPDATE Cliente_Produto SET 
+        idCliente = p_novoidcliente,
+        idProduto = p_novoidproduto
+    WHERE idCliente = p_idcliente AND idProduto = p_idproduto;
+    COMMIT;
+END;
+
+-- Procedure para excluir uma entrada na tabela Cliente_Produto
+CREATE OR REPLACE PROCEDURE excluir_cliente_produto(
+    p_idcliente IN NUMBER,
+    p_idproduto IN NUMBER
+)
+AS BEGIN
+    DELETE FROM Cliente_Produto WHERE idCliente = p_idcliente AND idProduto = p_idproduto;
+    COMMIT;
+END;
+
+
+/*PESQUISA_CLIENTE*/
+-- DROP das procedures relacionadas à tabela pesquisa_cliente
+DROP PROCEDURE inserir_pesquisa_cliente;
+DROP PROCEDURE atualizar_pesquisa_cliente;
+DROP PROCEDURE excluir_pesquisa_cliente;
 -- Procedure para inserir uma nova entrada na tabela pesquisa_cliente
 CREATE OR REPLACE PROCEDURE inserir_pesquisa_cliente(
     p_idcliente IN NUMBER,
@@ -659,6 +727,10 @@ END;
 
 
 /*HISTORICO_CLIENTE*/
+-- DROP das procedures relacionadas à tabela historico_cliente
+DROP PROCEDURE inserir_historico_cliente;
+DROP PROCEDURE atualizar_historico_cliente;
+DROP PROCEDURE excluir_historico_cliente;
 -- Procedure para inserir um novo registro no histórico do cliente na tabela historico_cliente
 CREATE OR REPLACE PROCEDURE inserir_historico_cliente(
     p_idhistcompra IN NUMBER,
@@ -695,42 +767,11 @@ AS BEGIN
     COMMIT;
 END;
 
-/*PESQUISA_CLIENTE*/
--- Procedure para inserir uma nova entrada na tabela pesquisa_cliente
-CREATE OR REPLACE PROCEDURE inserir_pesquisa_cliente(
-    p_idcliente IN NUMBER,
-    p_idpesquisa IN NUMBER
-)
-AS BEGIN
-    INSERT INTO pesquisa_cliente (idcliente, idpesquisa) 
-    VALUES (p_idcliente, p_idpesquisa);
-    COMMIT;
-END;
-
--- Procedure para atualizar uma entrada na tabela pesquisa_cliente
-CREATE OR REPLACE PROCEDURE atualizar_pesquisa_cliente(
-    p_idcliente IN NUMBER,
-    p_idpesquisa IN NUMBER,
-    p_novoidcliente IN NUMBER
-)
-AS BEGIN
-    UPDATE pesquisa_cliente SET 
-        idcliente = p_novoidcliente
-    WHERE idcliente = p_idcliente AND idpesquisa = p_idpesquisa;
-    COMMIT;
-END;
-
--- Procedure para excluir uma entrada na tabela pesquisa_cliente
-CREATE OR REPLACE PROCEDURE excluir_pesquisa_cliente(
-    p_idcliente IN NUMBER,
-    p_idpesquisa IN NUMBER
-)
-AS BEGIN
-    DELETE FROM pesquisa_cliente WHERE idcliente = p_idcliente AND idpesquisa = p_idpesquisa;
-    COMMIT;
-END;
-
 /*HISTORICO_PRODUTO*/
+-- DROP das procedures relacionadas à tabela historico_produto
+DROP PROCEDURE inserir_historico_produto;
+DROP PROCEDURE atualizar_historico_produto;
+DROP PROCEDURE excluir_historico_produto;
 -- Procedure para inserir um novo registro na tabela historico_produto
 CREATE OR REPLACE PROCEDURE inserir_historico_produto(
     p_idhistcompra IN NUMBER,
@@ -763,6 +804,10 @@ END;
 
 
 /*PRODUTO_FORNECEDOR*/
+-- DROP das procedures relacionadas à tabela produto_fornecedor
+DROP PROCEDURE inserir_produto_fornecedor;
+DROP PROCEDURE atualizar_produto_fornecedor;
+DROP PROCEDURE excluir_produto_fornecedor;
 -- Procedure para inserir um novo relacionamento na tabela produto_fornecedor
 CREATE OR REPLACE PROCEDURE inserir_produto_fornecedor(
     p_idproduto IN NUMBER,
@@ -798,6 +843,10 @@ AS BEGIN
 END;
 
 /*LEAD*/
+-- DROP das procedures relacionadas à tabela lead
+DROP PROCEDURE inserir_lead;
+DROP PROCEDURE atualizar_lead;
+DROP PROCEDURE excluir_lead;
 -- Procedure para inserir um novo lead na tabela lead
 CREATE OR REPLACE PROCEDURE inserir_lead(
     p_idlead IN NUMBER,
@@ -833,4 +882,7 @@ AS BEGIN
     DELETE FROM lead WHERE idlead = p_idlead;
     COMMIT;
 END;
+
+
+
 
