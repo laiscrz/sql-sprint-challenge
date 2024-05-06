@@ -414,3 +414,423 @@ BEGIN
     END IF;
     COMMIT;
 END;
+
+
+-- CRIAÇÃO DE PROCEDURES DAS TABELAS => INSERT, DELETE E UPDATE
+/* PESQUISA*/
+-- Procedure para inserir uma nova pesquisa na tabela pesquisa
+CREATE OR REPLACE PROCEDURE inserir_pesquisa(p_idpesquisa IN NUMBER,p_palavrachave IN VARCHAR2)
+AS BEGIN
+    INSERT INTO pesquisa (idpesquisa, palavrachave) 
+    VALUES (p_idpesquisa, p_palavrachave);
+    COMMIT;
+END;
+
+-- Procedure para atualizar os dados de uma pesquisa na tabela pesquisa
+CREATE OR REPLACE PROCEDURE atualizar_pesquisa(
+    p_idpesquisa IN NUMBER,
+    p_palavrachave IN VARCHAR2
+)
+AS BEGIN
+    UPDATE pesquisa SET 
+        palavrachave = p_palavrachave
+    WHERE idpesquisa = p_idpesquisa;
+    COMMIT;
+END;
+
+-- Procedure para excluir uma pesquisa da tabela pesquisa
+CREATE OR REPLACE PROCEDURE excluir_pesquisa(p_idpesquisa IN NUMBER)
+AS BEGIN
+    DELETE FROM pesquisa WHERE idpesquisa = p_idpesquisa;
+    COMMIT;
+END;
+
+
+/*LOCALIZACAOGEOGRAFICA*/
+-- Procedure para inserir uma nova localização geográfica na tabela localizacaogeografica
+CREATE OR REPLACE PROCEDURE inserir_localizacao_geografica(
+    p_idlocalizacao IN NUMBER,
+    p_pais IN VARCHAR2,
+    p_estado IN VARCHAR2,
+    p_cidade IN VARCHAR2,
+    p_cep IN VARCHAR2
+)
+AS BEGIN
+    INSERT INTO localizacaogeografica (idlocalizacao, pais, estado, cidade, cep) 
+    VALUES (p_idlocalizacao, p_pais, p_estado, p_cidade, p_cep);
+    COMMIT;
+END;
+
+-- Procedure para atualizar os dados de uma localização geográfica na tabela localizacaogeografica
+CREATE OR REPLACE PROCEDURE atualizar_localizacao_geografica(
+    p_idlocalizacao IN NUMBER,
+    p_pais IN VARCHAR2,
+    p_estado IN VARCHAR2,
+    p_cidade IN VARCHAR2,
+    p_cep IN VARCHAR2
+)
+AS BEGIN
+    UPDATE localizacaogeografica SET 
+        pais = p_pais, 
+        estado = p_estado, 
+        cidade = p_cidade, 
+        cep = p_cep
+    WHERE idlocalizacao = p_idlocalizacao;
+    COMMIT;
+END;
+
+-- Procedure para excluir uma localização geográfica da tabela localizacaogeografica
+CREATE OR REPLACE PROCEDURE excluir_localizacao_geografica(p_idlocalizacao IN NUMBER)
+AS BEGIN
+    DELETE FROM localizacaogeografica WHERE idlocalizacao = p_idlocalizacao;
+    COMMIT;
+END;
+
+
+/*CLIENTE*/
+-- Procedure para inserir um novo cliente na tabela cliente
+CREATE OR REPLACE PROCEDURE inserir_cliente(
+    p_idcliente IN NUMBER,
+    p_nome IN VARCHAR2,
+    p_telefone IN VARCHAR2,
+    p_email IN VARCHAR2,
+    p_idade IN NUMBER,
+    p_genero IN VARCHAR2,
+    p_estadocivil IN VARCHAR2,
+    p_idlocalizacao IN NUMBER,
+    p_nivelrenda IN NUMBER,
+    p_niveleducacao IN VARCHAR2,
+    p_formapagamentopref IN VARCHAR2
+)
+AS BEGIN
+    INSERT INTO cliente (idcliente, nome, telefone, email, idade, genero, estadocivil, idlocalizacao, nivelrenda, niveleducacao, formapagamentopref) 
+    VALUES (p_idcliente, p_nome, p_telefone, p_email, p_idade, p_genero, p_estadocivil, p_idlocalizacao, p_nivelrenda, p_niveleducacao, p_formapagamentopref);
+    COMMIT;
+END;
+
+-- Procedure para atualizar os dados de um cliente na tabela cliente
+CREATE OR REPLACE PROCEDURE atualizar_cliente(
+    p_idcliente IN NUMBER,
+    p_nome IN VARCHAR2,
+    p_telefone IN VARCHAR2,
+    p_email IN VARCHAR2,
+    p_idade IN NUMBER,
+    p_genero IN VARCHAR2,
+    p_estadocivil IN VARCHAR2,
+    p_idlocalizacao IN NUMBER,
+    p_nivelrenda IN NUMBER,
+    p_niveleducacao IN VARCHAR2,
+    p_formapagamentopref IN VARCHAR2
+)
+AS BEGIN
+    UPDATE cliente SET 
+        nome = p_nome, 
+        telefone = p_telefone, 
+        email = p_email, 
+        idade = p_idade, 
+        genero = p_genero, 
+        estadocivil = p_estadocivil, 
+        idlocalizacao = p_idlocalizacao, 
+        nivelrenda = p_nivelrenda, 
+        niveleducacao = p_niveleducacao, 
+        formapagamentopref = p_formapagamentopref 
+    WHERE idcliente = p_idcliente;
+    COMMIT;
+END;
+
+-- Procedure para excluir um cliente da tabela cliente
+CREATE OR REPLACE PROCEDURE excluir_cliente(p_idcliente IN NUMBER)
+AS BEGIN
+    DELETE FROM cliente WHERE idcliente = p_idcliente;
+    COMMIT;
+END;
+
+/*PRODUTO*/
+-- Procedure para inserir um novo produto na tabela produto
+CREATE OR REPLACE PROCEDURE inserir_produto(
+    p_idproduto IN NUMBER,
+    p_nomeproduto IN VARCHAR2,
+    p_estrelas IN NUMBER,
+    p_categoriaproduto IN VARCHAR2,
+    p_qtdestoque IN NUMBER,
+    p_datacompraproduto IN DATE,
+    p_valorproduto IN NUMBER
+)
+AS BEGIN
+    INSERT INTO produto (idproduto, nomeproduto, estrelas, categoriaproduto, qtdestoque, datacompraproduto, valorproduto) 
+    VALUES (p_idproduto, p_nomeproduto, p_estrelas, p_categoriaproduto, p_qtdestoque, p_datacompraproduto, p_valorproduto);
+    COMMIT;
+END;
+
+-- Procedure para atualizar os dados de um produto na tabela produto
+CREATE OR REPLACE PROCEDURE atualizar_produto(
+    p_idproduto IN NUMBER,
+    p_nomeproduto IN VARCHAR2,
+    p_estrelas IN NUMBER,
+    p_categoriaproduto IN VARCHAR2,
+    p_qtdestoque IN NUMBER,
+    p_datacompraproduto IN DATE,
+    p_valorproduto IN NUMBER
+)
+AS BEGIN
+    UPDATE produto SET 
+        nomeproduto = p_nomeproduto, 
+        estrelas = p_estrelas, 
+        categoriaproduto = p_categoriaproduto, 
+        qtdestoque = p_qtdestoque, 
+        datacompraproduto = p_datacompraproduto, 
+        valorproduto = p_valorproduto
+    WHERE idproduto = p_idproduto;
+    COMMIT;
+END;
+
+-- Procedure para excluir um produto da tabela produto
+CREATE OR REPLACE PROCEDURE excluir_produto(p_idproduto IN NUMBER)
+AS BEGIN
+    DELETE FROM produto WHERE idproduto = p_idproduto;
+    COMMIT;
+END;
+
+
+/*FORNECEDOR*/
+-- Procedure para inserir um novo fornecedor na tabela fornecedor
+CREATE OR REPLACE PROCEDURE inserir_fornecedor(
+    p_idfornecedor IN NUMBER,
+    p_nomefornecedor IN VARCHAR2,
+    p_tipofornecedor IN VARCHAR2
+)
+AS BEGIN
+    INSERT INTO fornecedor (idfornecedor, nomefornecedor, tipofornecedor) 
+    VALUES (p_idfornecedor, p_nomefornecedor, p_tipofornecedor);
+    COMMIT;
+END;
+
+-- Procedure para atualizar os dados de um fornecedor na tabela fornecedor
+CREATE OR REPLACE PROCEDURE atualizar_fornecedor(
+    p_idfornecedor IN NUMBER,
+    p_nomefornecedor IN VARCHAR2,
+    p_tipofornecedor IN VARCHAR2
+)
+AS BEGIN
+    UPDATE fornecedor SET 
+        nomefornecedor = p_nomefornecedor, 
+        tipofornecedor = p_tipofornecedor
+    WHERE idfornecedor = p_idfornecedor;
+    COMMIT;
+END;
+
+-- Procedure para excluir um fornecedor da tabela fornecedor
+CREATE OR REPLACE PROCEDURE excluir_fornecedor(p_idfornecedor IN NUMBER)
+AS BEGIN
+    DELETE FROM fornecedor WHERE idfornecedor = p_idfornecedor;
+    COMMIT;
+END;
+
+/*CLIENTE_PRODUTO*/
+-- Procedure para inserir uma nova entrada na tabela pesquisa_cliente
+CREATE OR REPLACE PROCEDURE inserir_pesquisa_cliente(
+    p_idcliente IN NUMBER,
+    p_idpesquisa IN NUMBER
+)
+AS BEGIN
+    INSERT INTO pesquisa_cliente (idcliente, idpesquisa) 
+    VALUES (p_idcliente, p_idpesquisa);
+    COMMIT;
+END;
+
+-- Procedure para atualizar uma entrada na tabela pesquisa_cliente
+CREATE OR REPLACE PROCEDURE atualizar_pesquisa_cliente(
+    p_idcliente IN NUMBER,
+    p_idpesquisa IN NUMBER
+)
+AS BEGIN
+    UPDATE pesquisa_cliente SET 
+        idcliente = p_idcliente
+    WHERE idpesquisa = p_idpesquisa;
+    COMMIT;
+END;
+
+-- Procedure para excluir uma entrada na tabela pesquisa_cliente
+CREATE OR REPLACE PROCEDURE excluir_pesquisa_cliente(p_idpesquisa IN NUMBER)
+AS BEGIN
+    DELETE FROM pesquisa_cliente WHERE idpesquisa = p_idpesquisa;
+    COMMIT;
+END;
+
+
+/*HISTORICO_CLIENTE*/
+-- Procedure para inserir um novo registro no histórico do cliente na tabela historico_cliente
+CREATE OR REPLACE PROCEDURE inserir_historico_cliente(
+    p_idhistcompra IN NUMBER,
+    p_idcliente IN NUMBER,
+    p_idproduto IN NUMBER,
+    p_datacompraproduto IN DATE
+)
+AS BEGIN
+    INSERT INTO historico_cliente (idhistcompra, idcliente, idproduto, datacompraproduto) 
+    VALUES (p_idhistcompra, p_idcliente, p_idproduto, p_datacompraproduto);
+    COMMIT;
+END;
+
+-- Procedure para atualizar os dados de um registro no histórico do cliente na tabela historico_cliente
+CREATE OR REPLACE PROCEDURE atualizar_historico_cliente(
+    p_idhistcompra IN NUMBER,
+    p_idcliente IN NUMBER,
+    p_idproduto IN NUMBER,
+    p_datacompraproduto IN DATE
+)
+AS BEGIN
+    UPDATE historico_cliente SET 
+        idcliente = p_idcliente, 
+        idproduto = p_idproduto, 
+        datacompraproduto = p_datacompraproduto
+    WHERE idhistcompra = p_idhistcompra;
+    COMMIT;
+END;
+
+-- Procedure para excluir um registro do histórico do cliente da tabela historico_cliente
+CREATE OR REPLACE PROCEDURE excluir_historico_cliente(p_idhistcompra IN NUMBER)
+AS BEGIN
+    DELETE FROM historico_cliente WHERE idhistcompra = p_idhistcompra;
+    COMMIT;
+END;
+
+/*PESQUISA_CLIENTE*/
+-- Procedure para inserir uma nova entrada na tabela pesquisa_cliente
+CREATE OR REPLACE PROCEDURE inserir_pesquisa_cliente(
+    p_idcliente IN NUMBER,
+    p_idpesquisa IN NUMBER
+)
+AS BEGIN
+    INSERT INTO pesquisa_cliente (idcliente, idpesquisa) 
+    VALUES (p_idcliente, p_idpesquisa);
+    COMMIT;
+END;
+
+-- Procedure para atualizar uma entrada na tabela pesquisa_cliente
+CREATE OR REPLACE PROCEDURE atualizar_pesquisa_cliente(
+    p_idcliente IN NUMBER,
+    p_idpesquisa IN NUMBER,
+    p_novoidcliente IN NUMBER
+)
+AS BEGIN
+    UPDATE pesquisa_cliente SET 
+        idcliente = p_novoidcliente
+    WHERE idcliente = p_idcliente AND idpesquisa = p_idpesquisa;
+    COMMIT;
+END;
+
+-- Procedure para excluir uma entrada na tabela pesquisa_cliente
+CREATE OR REPLACE PROCEDURE excluir_pesquisa_cliente(
+    p_idcliente IN NUMBER,
+    p_idpesquisa IN NUMBER
+)
+AS BEGIN
+    DELETE FROM pesquisa_cliente WHERE idcliente = p_idcliente AND idpesquisa = p_idpesquisa;
+    COMMIT;
+END;
+
+/*HISTORICO_PRODUTO*/
+-- Procedure para inserir um novo registro na tabela historico_produto
+CREATE OR REPLACE PROCEDURE inserir_historico_produto(
+    p_idhistcompra IN NUMBER,
+    p_idproduto IN NUMBER
+)
+AS BEGIN
+    INSERT INTO historico_produto (idhistcompra, idproduto) 
+    VALUES (p_idhistcompra, p_idproduto);
+    COMMIT;
+END;
+
+-- Procedure para atualizar um registro na tabela historico_produto
+CREATE OR REPLACE PROCEDURE atualizar_historico_produto(
+    p_idhistcompra IN NUMBER,
+    p_novoidproduto IN NUMBER
+)
+AS BEGIN
+    UPDATE historico_produto SET 
+        idproduto = p_novoidproduto
+    WHERE idhistcompra = p_idhistcompra;
+    COMMIT;
+END;
+
+-- Procedure para excluir um registro na tabela historico_produto
+CREATE OR REPLACE PROCEDURE excluir_historico_produto(p_idhistcompra IN NUMBER)
+AS BEGIN
+    DELETE FROM historico_produto WHERE idhistcompra = p_idhistcompra;
+    COMMIT;
+END;
+
+
+/*PRODUTO_FORNECEDOR*/
+-- Procedure para inserir um novo relacionamento na tabela produto_fornecedor
+CREATE OR REPLACE PROCEDURE inserir_produto_fornecedor(
+    p_idproduto IN NUMBER,
+    p_idfornecedor IN NUMBER
+)
+AS BEGIN
+    INSERT INTO produto_fornecedor (idproduto, idfornecedor) 
+    VALUES (p_idproduto, p_idfornecedor);
+    COMMIT;
+END;
+
+-- Procedure para atualizar um relacionamento na tabela produto_fornecedor
+CREATE OR REPLACE PROCEDURE atualizar_produto_fornecedor(
+    p_idproduto IN NUMBER,
+    p_idfornecedor IN NUMBER,
+    p_novoidfornecedor IN NUMBER
+)
+AS BEGIN
+    UPDATE produto_fornecedor SET 
+        idfornecedor = p_novoidfornecedor
+    WHERE idproduto = p_idproduto AND idfornecedor = p_idfornecedor;
+    COMMIT;
+END;
+
+-- Procedure para excluir um relacionamento na tabela produto_fornecedor
+CREATE OR REPLACE PROCEDURE excluir_produto_fornecedor(
+    p_idproduto IN NUMBER,
+    p_idfornecedor IN NUMBER
+)
+AS BEGIN
+    DELETE FROM produto_fornecedor WHERE idproduto = p_idproduto AND idfornecedor = p_idfornecedor;
+    COMMIT;
+END;
+
+/*LEAD*/
+-- Procedure para inserir um novo lead na tabela lead
+CREATE OR REPLACE PROCEDURE inserir_lead(
+    p_idlead IN NUMBER,
+    p_idcliente IN NUMBER,
+    p_canalorigem IN VARCHAR2,
+    p_categoriaprodutointeresse IN VARCHAR2
+)
+AS BEGIN
+    INSERT INTO lead (idlead, idcliente, canalorigem, categoriaprodutointeresse) 
+    VALUES (p_idlead, p_idcliente, p_canalorigem, p_categoriaprodutointeresse);
+    COMMIT;
+END;
+
+-- Procedure para atualizar os dados de um lead na tabela lead
+CREATE OR REPLACE PROCEDURE atualizar_lead(
+    p_idlead IN NUMBER,
+    p_idcliente IN NUMBER,
+    p_canalorigem IN VARCHAR2,
+    p_categoriaprodutointeresse IN VARCHAR2
+)
+AS BEGIN
+    UPDATE lead SET 
+        idcliente = p_idcliente, 
+        canalorigem = p_canalorigem, 
+        categoriaprodutointeresse = p_categoriaprodutointeresse
+    WHERE idlead = p_idlead;
+    COMMIT;
+END;
+
+-- Procedure para excluir um lead da tabela lead
+CREATE OR REPLACE PROCEDURE excluir_lead(p_idlead IN NUMBER)
+AS BEGIN
+    DELETE FROM lead WHERE idlead = p_idlead;
+    COMMIT;
+END;
+
