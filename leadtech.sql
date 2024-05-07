@@ -913,4 +913,32 @@ END;
 -- Chamando a Procedure que utiliza JOIN e CURSOR
 EXEC relatorio_compras;
 
+-- CRIAÇÃO PROCEDURE QUE UTILIZE ( funções, inner Join, order by, sum ou count.)
+DROP PROCEDURE Relatorio_Clientes_Por_Localizacao;
+CREATE OR REPLACE PROCEDURE Relatorio_Clientes_Por_Localizacao AS
+    FUNCTION Contar_Clientes_Por_Localizacao(id_localizacao IN NUMBER) RETURN NUMBER IS
+        v_count NUMBER := 0;
+    BEGIN
+        SELECT COUNT(*)
+        INTO v_count
+        FROM Cliente c
+        INNER JOIN LocalizacaoGeografica lg ON c.idLocalizacao = lg.idLocalizacao
+        WHERE lg.idLocalizacao = id_localizacao;
 
+        RETURN v_count;
+    END Contar_Clientes_Por_Localizacao;
+BEGIN
+    FOR cur_localizacao IN (
+        SELECT lg.idLocalizacao, lg.cidade, lg.estado, lg.pais
+        FROM LocalizacaoGeografica lg
+        ORDER BY lg.cidade
+    ) LOOP
+        DBMS_OUTPUT.PUT_LINE('Cidade: ' || cur_localizacao.cidade);
+        DBMS_OUTPUT.PUT_LINE('Estado: ' || cur_localizacao.estado);
+        DBMS_OUTPUT.PUT_LINE('País: ' || cur_localizacao.pais);
+        DBMS_OUTPUT.PUT_LINE('Total de Clientes: ' || Contar_Clientes_Por_Localizacao(cur_localizacao.idLocalizacao));
+        DBMS_OUTPUT.PUT_LINE('---------------------');
+    END LOOP;
+END Relatorio_Clientes_Por_Localizacao;
+-- Chamando PROCEDURE
+EXEC Relatorio_Clientes_Por_Localizacao;
