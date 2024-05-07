@@ -883,6 +883,34 @@ AS BEGIN
     COMMIT;
 END;
 
+-- CRIAÇÃO DE PROCEDURE COM USO DE JOIN E CURSOR
+CREATE OR REPLACE PROCEDURE relatorio_compras IS
+  -- Declaração do cursor para obter informações sobre as compras
+  CURSOR c_compras IS
+    SELECT hc.idHistCompra, c.nome AS nome_cliente, p.nomeProduto, f.nomeFornecedor
+    FROM Historico_Cliente hc
+    INNER JOIN Cliente c ON hc.idCliente = c.idCliente
+    INNER JOIN Produto p ON hc.idProduto = p.idProduto
+    INNER JOIN Produto_Fornecedor pf ON p.idProduto = pf.idProduto
+    INNER JOIN Fornecedor f ON pf.idFornecedor = f.idFornecedor;
+BEGIN
+  -- Imprime cabeçalho do relatório
+  DBMS_OUTPUT.PUT_LINE('ID Compra | Cliente | Produto | Fornecedor');
+  DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+  
+  -- Utiliza um FOR loop para iterar sobre os resultados do cursor
+  FOR compra IN c_compras LOOP
+    -- Imprime informações da compra
+    DBMS_OUTPUT.PUT_LINE(compra.idHistCompra || ' | ' || compra.nome_cliente || ' | ' || compra.nomeProduto || ' | ' || compra.nomeFornecedor);
+  END LOOP;
+  
+EXCEPTION
+  WHEN OTHERS THEN
+    -- Tratamento de exceções, se necessário
+    DBMS_OUTPUT.PUT_LINE('Erro: ' || SQLERRM);
+END;
 
+-- Chamando a Procedure que utiliza JOIN e CURSOR
+EXEC relatorio_compras;
 
 
