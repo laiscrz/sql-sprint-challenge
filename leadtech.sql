@@ -503,6 +503,12 @@ CREATE OR REPLACE PROCEDURE excluir_localizacao_geografica(p_idlocalizacao IN NU
 AS BEGIN
     DELETE FROM localizacaogeografica WHERE idlocalizacao = p_idlocalizacao;
     COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum localizacao encontrado com o ID especificado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao excluir localizacao: ' || SQLERRM);
+        ROLLBACK; 
 END;
 
 
@@ -582,6 +588,12 @@ CREATE OR REPLACE PROCEDURE excluir_cliente(p_idcliente IN NUMBER)
 AS BEGIN
     DELETE FROM cliente WHERE idcliente = p_idcliente;
     COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum cliente encontrado com o ID especificado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao excluir cliente: ' || SQLERRM);
+        ROLLBACK; 
 END;
 
 
@@ -649,6 +661,12 @@ CREATE OR REPLACE PROCEDURE excluir_produto(p_idproduto IN NUMBER)
 AS BEGIN
     DELETE FROM produto WHERE idproduto = p_idproduto;
     COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum produto encontrado com o ID especificado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao excluir produto: ' || SQLERRM);
+        ROLLBACK; 
 END;
 
 
@@ -688,6 +706,12 @@ CREATE OR REPLACE PROCEDURE excluir_fornecedor(p_idfornecedor IN NUMBER)
 AS BEGIN
     DELETE FROM fornecedor WHERE idfornecedor = p_idfornecedor;
     COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum fornecedor encontrado com o ID especificado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao excluir fornecedor: ' || SQLERRM);
+        ROLLBACK; 
 END;
 
 /*LEAD*/
@@ -729,7 +753,14 @@ CREATE OR REPLACE PROCEDURE excluir_lead(p_idlead IN NUMBER)
 AS BEGIN
     DELETE FROM lead WHERE idlead = p_idlead;
     COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum lead encontrado com o ID especificado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao excluir lead: ' || SQLERRM);
+        ROLLBACK; 
 END;
+
 
 -- CRIAÇÃO DE PROCEDURE COM USO DE JOIN E CURSOR
 CREATE OR REPLACE PROCEDURE relatorio_compras IS
