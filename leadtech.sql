@@ -753,8 +753,9 @@ BEGIN
   END LOOP;
   
 EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Nenhum relatorio de compra encontrado.');
   WHEN OTHERS THEN
-    -- Tratamento de exceções, se necessário
     DBMS_OUTPUT.PUT_LINE('Erro: ' || SQLERRM);
 END;
 
@@ -787,6 +788,12 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Total de Clientes: ' || Contar_Clientes_Por_Localizacao(cur_localizacao.idLocalizacao));
         DBMS_OUTPUT.PUT_LINE('---------------------');
     END LOOP;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhuma localização encontrada.');
+    WHEN OTHERS THEN
+        -- Registra o erro ou lida com ele conforme necessário
+        DBMS_OUTPUT.PUT_LINE('Erro em Relatorio_Clientes_Por_Localizacao: ' || SQLERRM);
 END Relatorio_Clientes_Por_Localizacao;
 -- Chamando procedure que utiliza ( funções, inner Join, order by, sum ou count.)
 EXEC Relatorio_Clientes_Por_Localizacao;
