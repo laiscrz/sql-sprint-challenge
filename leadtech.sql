@@ -526,9 +526,25 @@ CREATE OR REPLACE PROCEDURE inserir_cliente(
     p_formapagamentopref IN VARCHAR2
 )
 AS BEGIN
-    INSERT INTO cliente (idcliente, nome, telefone, email, idade, genero, estadocivil, idlocalizacao, nivelrenda, niveleducacao, formapagamentopref) 
-    VALUES (p_idcliente, p_nome, p_telefone, p_email, p_idade, p_genero, p_estadocivil, p_idlocalizacao, p_nivelrenda, p_niveleducacao, p_formapagamentopref);
-    COMMIT;
+    -- Verificando se os dados do cliente são válidos usando a função validar_cliente
+    IF validar_cliente(p_idade, p_email, p_genero) THEN
+        BEGIN
+            INSERT INTO cliente (idcliente, nome, telefone, email, idade, genero, estadocivil, idlocalizacao, nivelrenda, niveleducacao, formapagamentopref) 
+            VALUES (p_idcliente, p_nome, p_telefone, p_email, p_idade, p_genero, p_estadocivil, p_idlocalizacao, p_nivelrenda, p_niveleducacao, p_formapagamentopref);
+            COMMIT;
+            DBMS_OUTPUT.PUT_LINE('Cliente inserido com sucesso.');
+        END;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Dados do cliente inválidos. Verifique a idade, o e-mail e o gênero.');
+    END IF;
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir cliente: Já existe um cliente com este ID.');
+    WHEN VALUE_ERROR THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir cliente: Verifique se os tipos de dados estão corretos.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir cliente: ' || SQLERRM);
+        ROLLBACK;
 END;
 
 -- Procedure para atualizar os dados de um cliente na tabela cliente
@@ -585,9 +601,25 @@ CREATE OR REPLACE PROCEDURE inserir_produto(
     p_valorproduto IN NUMBER
 )
 AS BEGIN
-    INSERT INTO produto (idproduto, nomeproduto, estrelas, categoriaproduto, qtdestoque, datacompraproduto, valorproduto) 
-    VALUES (p_idproduto, p_nomeproduto, p_estrelas, p_categoriaproduto, p_qtdestoque, p_datacompraproduto, p_valorproduto);
-    COMMIT;
+    -- Verificar se os dados do produto são válidos usando a função validar_produto
+    IF validar_produto(p_estrelas, p_qtdestoque, p_valorproduto) THEN
+        BEGIN
+            INSERT INTO produto (idproduto, nomeproduto, estrelas, categoriaproduto, qtdestoque, datacompraproduto, valorproduto) 
+            VALUES (p_idproduto, p_nomeproduto, p_estrelas, p_categoriaproduto, p_qtdestoque, p_datacompraproduto, p_valorproduto);
+            COMMIT;
+            DBMS_OUTPUT.PUT_LINE('Produto inserido com sucesso.');
+        END;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Dados do produto inválidos. Verifique as estrelas, a quantidade em estoque e o valor do produto.');
+    END IF;
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir produto: Já existe um produto com este ID.');
+    WHEN VALUE_ERROR THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir produto: Verifique se os tipos de dados estão corretos.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir produto: ' || SQLERRM);
+        ROLLBACK;
 END;
 
 -- Procedure para atualizar os dados de um produto na tabela produto
