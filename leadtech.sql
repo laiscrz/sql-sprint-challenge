@@ -408,7 +408,6 @@ BEGIN
     END IF;
 END;
 
-
 -- Segunda funcao para validar entrada de dados: tabela produto
 /* Esta função valida os dados do produto referente a colunas :
     - estrelas:  estar entre 1 ate 5
@@ -441,17 +440,16 @@ BEGIN
     END IF;
 
     -- Retornar verdadeiro se todos os critérios forem atendidos, falso caso contrário
-    RETURN estrelas_validas AND categoria_valida AND estoque_valido AND valor_valido;
+    RETURN estrelas_validas AND estoque_valido AND valor_valido;
 END;
 -- Bloco PL/SQL com exemplo de chamada validar_produto
 DECLARE
     estrelas_produto NUMBER := 10;
-    categoria_produto VARCHAR2(100) := 'Eletrônicos';
     qtd_estoque NUMBER := 100;
     valor_produto NUMBER := 1500.00;
     resultado_validacao BOOLEAN;
 BEGIN
-    resultado_validacao := validar_produto(estrelas_produto, categoria_produto, qtd_estoque, valor_produto);
+    resultado_validacao := validar_produto(estrelas_produto, qtd_estoque, valor_produto);
     
     IF resultado_validacao THEN
         DBMS_OUTPUT.PUT_LINE('Os detalhes do produto são válidos.');
@@ -758,5 +756,5 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('---------------------');
     END LOOP;
 END Relatorio_Clientes_Por_Localizacao;
--- Chamando PROCEDURE
+-- Chamando procedure que utiliza ( funções, inner Join, order by, sum ou count.)
 EXEC Relatorio_Clientes_Por_Localizacao;
