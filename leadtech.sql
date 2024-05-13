@@ -496,6 +496,12 @@ AS BEGIN
         cep = p_cep
     WHERE idlocalizacao = p_idlocalizacao;
     COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum localizacao encontrado com o ID especificado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao localizacao localizacao: ' || SQLERRM);
+        ROLLBACK;
 END;
 
 -- Procedure para excluir uma localização geográfica da tabela localizacaogeografica
@@ -581,6 +587,12 @@ AS BEGIN
         formapagamentopref = p_formapagamentopref 
     WHERE idcliente = p_idcliente;
     COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum cliente encontrado com o ID especificado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao atualizar cliente: ' || SQLERRM);
+        ROLLBACK;
 END;
 
 -- Procedure para excluir um cliente da tabela cliente
@@ -654,6 +666,12 @@ AS BEGIN
         valorproduto = p_valorproduto
     WHERE idproduto = p_idproduto;
     COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum produto encontrado com o ID especificado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao atualizar produto: ' || SQLERRM);
+        ROLLBACK;
 END;
 
 -- Procedure para excluir um produto da tabela produto
@@ -699,6 +717,12 @@ AS BEGIN
         tipofornecedor = p_tipofornecedor
     WHERE idfornecedor = p_idfornecedor;
     COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum fornecedor encontrado com o ID especificado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao fornecedor fornecedor: ' || SQLERRM);
+        ROLLBACK;
 END;
 
 -- Procedure para excluir um fornecedor da tabela fornecedor
@@ -746,6 +770,12 @@ AS BEGIN
         categoriaprodutointeresse = p_categoriaprodutointeresse
     WHERE idlead = p_idlead;
     COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum lead encontrado com o ID especificado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao atualizar lead: ' || SQLERRM);
+        ROLLBACK;
 END;
 
 -- Procedure para excluir um lead da tabela lead
