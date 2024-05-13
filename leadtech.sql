@@ -793,15 +793,16 @@ END;
 
 
 -- CRIAÇÃO DE PROCEDURE COM USO DE JOIN E CURSOR
+DROP PROCEDURE relatorio_compras;
 CREATE OR REPLACE PROCEDURE relatorio_compras IS
   -- Declaração do cursor para obter informações sobre as compras
   CURSOR c_compras IS
     SELECT hc.idHistCompra, c.nome AS nome_cliente, p.nomeProduto, f.nomeFornecedor
     FROM Historico_Cliente hc
-    INNER JOIN Cliente c ON hc.idCliente = c.idCliente
-    INNER JOIN Produto p ON hc.idProduto = p.idProduto
-    INNER JOIN Produto_Fornecedor pf ON p.idProduto = pf.idProduto
-    INNER JOIN Fornecedor f ON pf.idFornecedor = f.idFornecedor;
+    JOIN Cliente c ON hc.idCliente = c.idCliente
+    JOIN Produto p ON hc.idProduto = p.idProduto
+    JOIN Produto_Fornecedor pf ON p.idProduto = pf.idProduto
+    JOIN Fornecedor f ON pf.idFornecedor = f.idFornecedor;
 BEGIN
   -- Imprime cabeçalho do relatório
   DBMS_OUTPUT.PUT_LINE('ID Compra | Cliente | Produto | Fornecedor');
