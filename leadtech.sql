@@ -697,6 +697,14 @@ AS BEGIN
     INSERT INTO lead (idlead, idcliente, canalorigem, categoriaprodutointeresse) 
     VALUES (p_idlead, p_idcliente, p_canalorigem, p_categoriaprodutointeresse);
     COMMIT;
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir lead: Já existe um produto com este ID.');
+    WHEN VALUE_ERROR THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir lead: Verifique se os tipos de dados estão corretos.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir lead: ' || SQLERRM);
+        ROLLBACK; 
 END;
 
 -- Procedure para atualizar os dados de um lead na tabela lead
