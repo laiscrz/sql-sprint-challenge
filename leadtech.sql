@@ -461,63 +461,6 @@ END;
 
 -- CRIAÇÃO DE PROCEDURES DAS TABELAS => INSERT, DELETE E UPDATE
 
-/*LOCALIZACAOGEOGRAFICA*/
--- DROP das procedures relacionadas à tabela localizacaogeografica
-DROP PROCEDURE inserir_localizacao_geografica;
-DROP PROCEDURE atualizar_localizacao_geografica;
-DROP PROCEDURE excluir_localizacao_geografica;
--- Procedure para inserir uma nova localização geográfica na tabela localizacaogeografica
-CREATE OR REPLACE PROCEDURE inserir_localizacao_geografica(
-    p_idlocalizacao IN NUMBER,
-    p_pais IN VARCHAR2,
-    p_estado IN VARCHAR2,
-    p_cidade IN VARCHAR2,
-    p_cep IN VARCHAR2
-)
-AS BEGIN
-    INSERT INTO localizacaogeografica (idlocalizacao, pais, estado, cidade, cep) 
-    VALUES (p_idlocalizacao, p_pais, p_estado, p_cidade, p_cep);
-    COMMIT;
-END;
-
--- Procedure para atualizar os dados de uma localização geográfica na tabela localizacaogeografica
-CREATE OR REPLACE PROCEDURE atualizar_localizacao_geografica(
-    p_idlocalizacao IN NUMBER,
-    p_pais IN VARCHAR2,
-    p_estado IN VARCHAR2,
-    p_cidade IN VARCHAR2,
-    p_cep IN VARCHAR2
-)
-AS BEGIN
-    UPDATE localizacaogeografica SET 
-        pais = p_pais, 
-        estado = p_estado, 
-        cidade = p_cidade, 
-        cep = p_cep
-    WHERE idlocalizacao = p_idlocalizacao;
-    COMMIT;
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('Nenhum localizacao encontrado com o ID especificado.');
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Erro ao localizacao localizacao: ' || SQLERRM);
-        ROLLBACK;
-END;
-
--- Procedure para excluir uma localização geográfica da tabela localizacaogeografica
-CREATE OR REPLACE PROCEDURE excluir_localizacao_geografica(p_idlocalizacao IN NUMBER)
-AS BEGIN
-    DELETE FROM localizacaogeografica WHERE idlocalizacao = p_idlocalizacao;
-    COMMIT;
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('Nenhum localizacao encontrado com o ID especificado.');
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Erro ao excluir localizacao: ' || SQLERRM);
-        ROLLBACK; 
-END;
-
-
 /*CLIENTE*/
 -- DROP das procedures relacionadas à tabela cliente
 DROP PROCEDURE inserir_cliente;
@@ -629,7 +572,7 @@ AS BEGIN
     IF validar_produto(p_estrelas, p_qtdestoque, p_valorproduto) THEN
         BEGIN
             INSERT INTO produto (idproduto, nomeproduto, estrelas, categoriaproduto, qtdestoque, datacompraproduto, valorproduto) 
-            VALUES (p_idproduto, p_nomeproduto, p_estrelas, p_categoriaproduto, p_qtdestoque, p_datacompraproduto, p_valorproduto);
+            VALUES (p_idproduto, p_nomeproduto, p_estrelas, p_categoriaproduto, p_qtdestoque, TO_DATE(p_datacompraproduto, 'YYYY-MM-DD'), p_valorproduto);
             COMMIT;
             DBMS_OUTPUT.PUT_LINE('Produto inserido com sucesso.');
         END;
@@ -686,7 +629,7 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro ao excluir produto: ' || SQLERRM);
         ROLLBACK; 
 END;
-
+select * from produto;
 
 /*FORNECEDOR*/
 -- DROP das procedures relacionadas à tabela fornecedor
