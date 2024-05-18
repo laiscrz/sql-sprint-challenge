@@ -719,6 +719,15 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro ao inserir lead: ' || SQLERRM);
         ROLLBACK; 
 END;
+-- Exemplo de chamada na procedure inserir_lead
+DECLARE
+    v_idlead NUMBER := 444;
+    v_idcliente NUMBER := 101; 
+    v_canalorigem VARCHAR2(50) := 'E-mail'; 
+    v_categoriaprodutointeresse VARCHAR2(50) := 'Decoração';  
+BEGIN
+    inserir_lead(p_idlead => v_idlead,p_idcliente => v_idcliente,p_canalorigem => v_canalorigem, p_categoriaprodutointeresse => v_categoriaprodutointeresse);
+END;
 
 -- Procedure para atualizar os dados de um lead na tabela lead
 CREATE OR REPLACE PROCEDURE atualizar_lead(
@@ -739,6 +748,16 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro ao atualizar lead: ' || SQLERRM);
         ROLLBACK;
 END;
+-- Exemplo de chamada na procedure atualizar_lead
+DECLARE
+    v_idlead_atualizar NUMBER := 444;
+    v_idcliente_atualizado NUMBER := 101;
+    v_canalorigem_atualizado VARCHAR2(50) := 'Redes Sociais';  -- Novo canal de origem do lead
+    v_categoriaprodutointeresse_atualizada VARCHAR2(50) := 'Higiene';  -- Nova categoria de produto de interesse do lead
+BEGIN
+    atualizar_lead(p_idlead => v_idlead_atualizar,p_idcliente => v_idcliente_atualizado,p_canalorigem => v_canalorigem_atualizado,
+    p_categoriaprodutointeresse => v_categoriaprodutointeresse_atualizada);
+END;
 
 -- Procedure para excluir um lead da tabela lead
 CREATE OR REPLACE PROCEDURE excluir_lead(p_idlead IN NUMBER)
@@ -752,7 +771,12 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro ao excluir lead: ' || SQLERRM);
         ROLLBACK; 
 END;
-
+-- Exemplo de chamada na procedure excluir_lead
+DECLARE
+    v_idlead_excluir NUMBER := 444;  -- ID do lead a ser excluído
+BEGIN
+    excluir_lead(p_idlead => v_idlead_excluir);
+END;
 
 -- CRIAÇÃO DE PROCEDURE COM USO DE JOIN E CURSOR
 DROP PROCEDURE relatorio_compras;
