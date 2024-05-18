@@ -725,7 +725,14 @@ END;
 -- Chamando a Procedure que utiliza JOIN e CURSOR
 EXEC relatorio_compras;
 
--- CRIAÇÃO PROCEDURE QUE UTILIZE ( funções, inner Join, order by, sum ou count.)
+-- CRIAÇÃO PROCEDURE QUE UTILIZE ( funções, inner Join, order by, sum ou count.) 
+-- com Regra de negocio
+/*
+Regra de Negócio da Solução: Gerar um relatório que liste todas as localizações geográficas, 
+ordenadas pela cidade, e mostre o número total de clientes associados a cada localização. 
+Este relatório deve incluir as informações de cidade, estado e país, junto com o total de clientes para 
+cada localização para a análise de distribuição geográfica de clientes.
+*/
 DROP PROCEDURE Relatorio_Clientes_Por_Localizacao;
 CREATE OR REPLACE PROCEDURE Relatorio_Clientes_Por_Localizacao AS
     FUNCTION Contar_Clientes_Por_Localizacao(id_localizacao IN NUMBER) RETURN NUMBER IS
