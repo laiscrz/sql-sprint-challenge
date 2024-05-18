@@ -502,6 +502,25 @@ EXCEPTION
         ROLLBACK;
 END;
 
+-- Exemplo de chamada na procedure inserir_cliente
+DECLARE
+    v_idcliente NUMBER := 222;
+    v_nome VARCHAR2(100) := 'João Silva';
+    v_telefone VARCHAR2(20) := '123456789';
+    v_email VARCHAR2(100) := 'joao.silva@example.com';
+    v_idade NUMBER := 30;
+    v_genero VARCHAR2(10) := 'Masculino';
+    v_estadocivil VARCHAR2(20) := 'Solteiro';
+    v_idlocalizacao NUMBER := 201;
+    v_nivelrenda NUMBER := 5000;
+    v_niveleducacao VARCHAR2(50) := 'Graduação';
+    v_formapagamentopref VARCHAR2(30) := 'Cartão de Crédito';
+BEGIN
+    inserir_cliente(p_idcliente => v_idcliente,p_nome => v_nome,p_telefone => v_telefone,p_email => v_email,p_idade => v_idade,p_genero => v_genero,p_estadocivil => v_estadocivil,
+        p_idlocalizacao => v_idlocalizacao,p_nivelrenda => v_nivelrenda,p_niveleducacao => v_niveleducacao,p_formapagamentopref => v_formapagamentopref);
+END;
+
+
 -- Procedure para atualizar os dados de um cliente na tabela cliente
 CREATE OR REPLACE PROCEDURE atualizar_cliente(
     p_idcliente IN NUMBER,
@@ -538,6 +557,25 @@ EXCEPTION
         ROLLBACK;
 END;
 
+-- Exemplo de chamada na procedure atualizar_cliente
+DECLARE
+    v_idcliente_atualizar NUMBER := 222;  
+    v_nome_atualizado VARCHAR2(100) := 'João Novo Silva';  
+    v_telefone_atualizado VARCHAR2(20) := '987654321';  
+    v_email_atualizado VARCHAR2(100) := 'joao.novo.silva@example.com'; 
+    v_idade_atualizada NUMBER := 31; 
+    v_genero_atualizado VARCHAR2(10) := 'Masculino'; 
+    v_estadocivil_atualizado VARCHAR2(20) := 'Casado';  
+    v_idlocalizacao_atualizada NUMBER := 202;
+    v_nivelrenda_atualizado NUMBER := 6000; 
+    v_niveleducacao_atualizado VARCHAR2(50) := 'Pós-Graduação';
+    v_formapagamentopref_atualizada VARCHAR2(30) := 'Boleto';
+BEGIN
+    atualizar_cliente(p_idcliente => v_idcliente_atualizar,p_nome => v_nome_atualizado,p_telefone => v_telefone_atualizado,p_email => v_email_atualizado,
+        p_idade => v_idade_atualizada,p_genero => v_genero_atualizado,p_estadocivil => v_estadocivil_atualizado,p_idlocalizacao => v_idlocalizacao_atualizada,
+        p_nivelrenda => v_nivelrenda_atualizado,p_niveleducacao => v_niveleducacao_atualizado,p_formapagamentopref => v_formapagamentopref_atualizada);
+END;
+
 -- Procedure para excluir um cliente da tabela cliente
 CREATE OR REPLACE PROCEDURE excluir_cliente(p_idcliente IN NUMBER)
 AS BEGIN
@@ -549,6 +587,12 @@ EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro ao excluir cliente: ' || SQLERRM);
         ROLLBACK; 
+END;
+-- Exemplo de chamada na procedure excluir_cliente
+DECLARE
+    v_idcliente_excluir NUMBER := 222;  -- ID do cliente a ser excluído
+BEGIN
+    excluir_cliente(p_idcliente => v_idcliente_excluir);
 END;
 
 
