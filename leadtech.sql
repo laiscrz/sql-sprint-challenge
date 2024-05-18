@@ -537,16 +537,8 @@ CREATE OR REPLACE PROCEDURE atualizar_cliente(
 )
 AS BEGIN
     UPDATE cliente SET 
-        nome = p_nome, 
-        telefone = p_telefone, 
-        email = p_email, 
-        idade = p_idade, 
-        genero = p_genero, 
-        estadocivil = p_estadocivil, 
-        idlocalizacao = p_idlocalizacao, 
-        nivelrenda = p_nivelrenda, 
-        niveleducacao = p_niveleducacao, 
-        formapagamentopref = p_formapagamentopref 
+        nome = p_nome, telefone = p_telefone, email = p_email, idade = p_idade, genero = p_genero, estadocivil = p_estadocivil, idlocalizacao = p_idlocalizacao, 
+        nivelrenda = p_nivelrenda, niveleducacao = p_niveleducacao, formapagamentopref = p_formapagamentopref 
     WHERE idcliente = p_idcliente;
     COMMIT;
 EXCEPTION
@@ -645,11 +637,7 @@ CREATE OR REPLACE PROCEDURE atualizar_produto(
 )
 AS BEGIN
     UPDATE produto SET 
-        nomeproduto = p_nomeproduto, 
-        estrelas = p_estrelas, 
-        categoriaproduto = p_categoriaproduto, 
-        qtdestoque = p_qtdestoque, 
-        datacompraproduto = p_datacompraproduto, 
+        nomeproduto = p_nomeproduto, estrelas = p_estrelas, categoriaproduto = p_categoriaproduto, qtdestoque = p_qtdestoque, datacompraproduto = p_datacompraproduto, 
         valorproduto = p_valorproduto
     WHERE idproduto = p_idproduto;
     COMMIT;
@@ -710,9 +698,7 @@ CREATE OR REPLACE PROCEDURE atualizar_lead(
 )
 AS BEGIN
     UPDATE lead SET 
-        idcliente = p_idcliente, 
-        canalorigem = p_canalorigem, 
-        categoriaprodutointeresse = p_categoriaprodutointeresse
+        idcliente = p_idcliente, canalorigem = p_canalorigem, categoriaprodutointeresse = p_categoriaprodutointeresse
     WHERE idlead = p_idlead;
     COMMIT;
 EXCEPTION
