@@ -520,7 +520,6 @@ BEGIN
         p_idlocalizacao => v_idlocalizacao,p_nivelrenda => v_nivelrenda,p_niveleducacao => v_niveleducacao,p_formapagamentopref => v_formapagamentopref);
 END;
 
-
 -- Procedure para atualizar os dados de um cliente na tabela cliente
 CREATE OR REPLACE PROCEDURE atualizar_cliente(
     p_idcliente IN NUMBER,
@@ -624,6 +623,19 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro ao inserir produto: ' || SQLERRM);
         ROLLBACK;
 END;
+-- Exemplo de chamada na procedure inserir_produto
+DECLARE
+    v_idproduto NUMBER := 555;
+    v_nomeproduto VARCHAR2(100) := 'Camiseta';
+    v_estrelas NUMBER := 4;
+    v_categoriaproduto VARCHAR2(50) := 'Moda';
+    v_qtdestoque NUMBER := 150;
+    v_datacompraproduto DATE := SYSDATE;
+    v_valorproduto NUMBER := 199;
+BEGIN
+    inserir_produto(p_idproduto => v_idproduto,p_nomeproduto => v_nomeproduto, p_estrelas => v_estrelas,p_categoriaproduto => v_categoriaproduto,
+        p_qtdestoque => v_qtdestoque,p_datacompraproduto => v_datacompraproduto,p_valorproduto => v_valorproduto);
+END;
 
 -- Procedure para atualizar os dados de um produto na tabela produto
 CREATE OR REPLACE PROCEDURE atualizar_produto(
@@ -648,6 +660,20 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro ao atualizar produto: ' || SQLERRM);
         ROLLBACK;
 END;
+-- Exemplo de chamada na procedure atualizar_produto
+DECLARE
+    v_idproduto_atualizar NUMBER := 555;  
+    v_nomeproduto_atualizado VARCHAR2(100) := 'Camiseta Nova'; 
+    v_estrelas_atualizado NUMBER := 5;  
+    v_categoriaproduto_atualizado VARCHAR2(50) := 'Moda Masculina';  
+    v_qtdestoque_atualizado NUMBER := 200; 
+    v_datacompraproduto_atualizado DATE := SYSDATE; 
+    v_valorproduto_atualizado NUMBER := 299; 
+BEGIN
+    atualizar_produto(p_idproduto => v_idproduto_atualizar,p_nomeproduto => v_nomeproduto_atualizado,p_estrelas => v_estrelas_atualizado,
+        p_categoriaproduto => v_categoriaproduto_atualizado,p_qtdestoque => v_qtdestoque_atualizado,p_datacompraproduto => v_datacompraproduto_atualizado,
+        p_valorproduto => v_valorproduto_atualizado);
+END;
 
 -- Procedure para excluir um produto da tabela produto
 CREATE OR REPLACE PROCEDURE excluir_produto(p_idproduto IN NUMBER)
@@ -661,7 +687,12 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro ao excluir produto: ' || SQLERRM);
         ROLLBACK; 
 END;
-select * from produto;
+-- Exemplo de chamada na procedure excluir_produto
+DECLARE
+    v_idproduto_excluir NUMBER := 555; 
+BEGIN
+    excluir_produto(p_idproduto => v_idproduto_excluir);
+END;
 
 /*LEAD*/
 -- DROP das procedures relacionadas à tabela lead
