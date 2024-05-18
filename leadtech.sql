@@ -631,56 +631,6 @@ EXCEPTION
 END;
 select * from produto;
 
-/*FORNECEDOR*/
--- DROP das procedures relacionadas à tabela fornecedor
-DROP PROCEDURE inserir_fornecedor;
-DROP PROCEDURE atualizar_fornecedor;
-DROP PROCEDURE excluir_fornecedor;
--- Procedure para inserir um novo fornecedor na tabela fornecedor
-CREATE OR REPLACE PROCEDURE inserir_fornecedor(
-    p_idfornecedor IN NUMBER,
-    p_nomefornecedor IN VARCHAR2,
-    p_tipofornecedor IN VARCHAR2
-)
-AS BEGIN
-    INSERT INTO fornecedor (idfornecedor, nomefornecedor, tipofornecedor) 
-    VALUES (p_idfornecedor, p_nomefornecedor, p_tipofornecedor);
-    COMMIT;
-END;
-
--- Procedure para atualizar os dados de um fornecedor na tabela fornecedor
-CREATE OR REPLACE PROCEDURE atualizar_fornecedor(
-    p_idfornecedor IN NUMBER,
-    p_nomefornecedor IN VARCHAR2,
-    p_tipofornecedor IN VARCHAR2
-)
-AS BEGIN
-    UPDATE fornecedor SET 
-        nomefornecedor = p_nomefornecedor, 
-        tipofornecedor = p_tipofornecedor
-    WHERE idfornecedor = p_idfornecedor;
-    COMMIT;
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('Nenhum fornecedor encontrado com o ID especificado.');
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Erro ao fornecedor fornecedor: ' || SQLERRM);
-        ROLLBACK;
-END;
-
--- Procedure para excluir um fornecedor da tabela fornecedor
-CREATE OR REPLACE PROCEDURE excluir_fornecedor(p_idfornecedor IN NUMBER)
-AS BEGIN
-    DELETE FROM fornecedor WHERE idfornecedor = p_idfornecedor;
-    COMMIT;
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('Nenhum fornecedor encontrado com o ID especificado.');
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Erro ao excluir fornecedor: ' || SQLERRM);
-        ROLLBACK; 
-END;
-
 /*LEAD*/
 -- DROP das procedures relacionadas à tabela lead
 DROP PROCEDURE inserir_lead;
