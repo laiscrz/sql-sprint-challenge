@@ -1,6 +1,7 @@
 # SQL - DESAFIO 2024 - PLUSOFT
 
 ### Sprint 1 - Nota: 100
+- 📊 Criação de DER/MER
 - 🏗️ DDL
 - 🔄 Blocos Anônimos de Consultas
 
