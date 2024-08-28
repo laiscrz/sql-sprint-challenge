@@ -853,4 +853,6 @@ END Relatorio_Clientes_Por_Localizacao;
 -- Chamando procedure que utiliza ( funções, inner Join, order by, sum ou count.)
 EXEC Relatorio_Clientes_Por_Localizacao;
 
-/* ----------------------------SPRINT 3*----------------------------/
+/* ----------------------------SPRINT 3 ----------------------------*/
+
+
