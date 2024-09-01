@@ -855,4 +855,84 @@ EXEC Relatorio_Clientes_Por_Localizacao;
 
 /* ----------------------------SPRINT 3 ----------------------------*/
 
+-- FUNCTIONS (30 PONTOS)
+/* converte_json_func:  Esta função tem como objetivo converter um conjunto de dados 
+retornado por um cursor (SYS_REFCURSOR) em uma string JSON */
+CREATE OR REPLACE FUNCTION converte_json_func(p_cursor IN SYS_REFCURSOR) RETURN VARCHAR2 IS
+    v_json VARCHAR2(32767) := '[';
+    v_separator VARCHAR2(10) := '';
+    v_idCliente Cliente.idCliente%TYPE;
+    v_nome Cliente.nome%TYPE;
+    v_telefone Cliente.telefone%TYPE;
+    v_email Cliente.email%TYPE;
+    v_idade Cliente.idade%TYPE;
+    v_idProduto Produto.idProduto%TYPE;
+    v_nomeProduto Produto.nomeProduto%TYPE;
+    v_categoriaProduto Produto.categoriaProduto%TYPE;
+    v_valorProduto Produto.valorProduto%TYPE;
+BEGIN
+    LOOP
+        FETCH p_cursor INTO v_idCliente, v_nome, v_telefone, v_email, v_idade, v_idProduto, v_nomeProduto, v_categoriaProduto, v_valorProduto;
+        EXIT WHEN p_cursor%NOTFOUND;
 
+        v_json := v_json || v_separator ||
+                  '{"idCliente": "' || v_idCliente || '", ' ||
+                  '"nomeCliente": "' || v_nome || '", ' || 
+                  '"telefoneCliente": "' || v_telefone || '", ' ||
+                  '"emailCliente": "' || v_email || '", ' || 
+                  '"idadeCliente": ' || v_idade || ', ' || 
+                  '"idProduto": "' || v_idProduto || '", ' ||
+                  '"nomeProduto": "' || v_nomeProduto || '", ' || 
+                  '"categoriaProduto": "' || v_categoriaProduto || '", ' ||
+                  '"valorProduto": ' || v_valorProduto || '}';
+
+        v_separator := ',' || CHR(10);
+    END LOOP;
+
+    v_json := v_json || ']';
+    RETURN v_json;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN 'Nenhum dado encontrado no cursor.';
+    WHEN VALUE_ERROR THEN
+        RETURN 'Erro de conversão de tipo de dado ao processar dados do cursor.';
+    WHEN TOO_MANY_ROWS THEN
+        RETURN 'Erro: Mais linhas retornadas do que o esperado.';
+    WHEN OTHERS THEN
+        RETURN 'Erro ao converter dados para JSON: ' || SQLERRM;
+END;
+
+
+
+
+-- PRCEDURES (30 PONTOS)
+/* obter_dados_cliente_produto: Este procedimento é responsável por recuperar dados de 
+clientes e produtos a partir de tabelas relacionadas (JOIN), converter esses dados em uma string JSON
+*/
+CREATE OR REPLACE PROCEDURE obter_dados_cliente_produto IS
+    v_cursor SYS_REFCURSOR;
+    v_json VARCHAR2(32767);
+BEGIN
+    OPEN v_cursor FOR
+        SELECT c.idCliente, c.nome, c.telefone, c.email, c.idade,
+               p.idProduto, p.nomeProduto, p.categoriaProduto, p.valorProduto
+        FROM Cliente c
+        JOIN Cliente_Produto cp ON c.idCliente = cp.idCliente
+        JOIN Produto p ON cp.idProduto = p.idProduto;
+
+    v_json := converte_json_func(v_cursor);
+    
+    DBMS_OUTPUT.PUT_LINE(v_json);
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum dado encontrado.');
+    WHEN TOO_MANY_ROWS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Muitos registros retornados.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro inesperado: ' || SQLERRM);
+END;
+-- Executa a procedure OBTER_DADOS_CLIENTE_PRODUTO
+EXEC OBTER_DADOS_CLIENTE_PRODUTO;
+
+-- TRIGGERS (30 PONTOS)
