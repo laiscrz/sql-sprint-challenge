@@ -973,4 +973,43 @@ END;
 -- Executa a procedure OBTER_DADOS_CLIENTE_PRODUTO
 EXEC OBTER_DADOS_CLIENTE_PRODUTO;
 
+/*
+Relatorio_Historico_Cliente: Este procedimento era um relatório detalhado sobre o histórico de compras dos clientes, 
+exibindo a data da compra atual,  a data da compra anterior e a data da próxima compra. 
+Se não houver dados para a compra anterior ou a próxima, ele exibe "Vazio".
+*/
+CREATE OR REPLACE PROCEDURE Relatorio_Historico_Cliente AS
+BEGIN
+    FOR rec IN (
+        SELECT
+            idHistCompra,
+            idCliente,
+            idProduto,
+            dataCompraProduto,
+            -- Subconsulta:  valor da linha anterior
+            (SELECT dataCompraProduto
+             FROM Historico_Cliente hc2
+             WHERE hc2.idHistCompra < hc1.idHistCompra
+             ORDER BY hc2.idHistCompra DESC
+             FETCH FIRST 1 ROW ONLY) AS Anterior,
+            -- atual
+            hc1.dataCompraProduto AS Atual,
+            -- Subconsulta: valor da próxima linha
+            (SELECT dataCompraProduto
+             FROM Historico_Cliente hc3
+             WHERE hc3.idHistCompra > hc1.idHistCompra
+             ORDER BY hc3.idHistCompra ASC
+             FETCH FIRST 1 ROW ONLY) AS Proximo
+        FROM Historico_Cliente hc1
+    ) LOOP
+        DBMS_OUTPUT.PUT_LINE('ID: ' || rec.idHistCompra ||
+                             ' | Anterior: ' || NVL(TO_CHAR(rec.Anterior, 'YYYY-MM-DD'), 'Vazio') ||
+                             ' | Atual: ' || TO_CHAR(rec.Atual, 'YYYY-MM-DD') ||
+                             ' | Próximo: ' || NVL(TO_CHAR(rec.Proximo, 'YYYY-MM-DD'), 'Vazio'));
+    END LOOP;
+END;
+
+-- Execução do procedimento Relatorio_Historico_Cliente
+EXEC Relatorio_Historico_Cliente;
+
 -- TRIGGERS (30 PONTOS)
