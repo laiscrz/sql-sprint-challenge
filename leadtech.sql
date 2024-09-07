@@ -906,41 +906,10 @@ EXCEPTION
 END;
 
 /*
-calcular_media_nivel_renda_por_produto: Esta função tem objetivo de calcular a média do nível de 
-renda dos clientes que adquiriram um determinado produto, identificado pelo p_idProduto. 
+
 */
-CREATE OR REPLACE FUNCTION calcular_media_nivel_renda_por_produto(p_idProduto IN NUMBER)
-RETURN VARCHAR2
-IS
-    v_media NUMBER(12, 2);
-BEGIN
-    SELECT AVG(c.nivelRenda) INTO v_media
-    FROM Cliente c
-    JOIN Cliente_Produto cp ON c.idCliente = cp.idCliente
-    WHERE cp.idProduto = p_idProduto;
 
-    IF v_media IS NULL THEN
-        RETURN 'A média do nível de renda não pôde ser calculada (dados nulos ou inexistentes).';
-    ELSE
-        RETURN 'Média do Nível de Renda: ' || TO_CHAR(v_media);
-    END IF;
 
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        RETURN 'Nenhum dado encontrado para o produto especificado.';
-    WHEN ZERO_DIVIDE THEN
-        RETURN 'Erro de divisão por zero ao calcular a média.';
-    WHEN OTHERS THEN
-        RETURN 'Ocorreu um erro ao calcular a média do nível de renda.';
-END;
-
--- Esse codigo TESTA a função calcular_media_nivel_renda_por_produto
-DECLARE
-    resultado VARCHAR2(255);
-BEGIN
-    resultado := calcular_media_nivel_renda_por_produto(302);
-    DBMS_OUTPUT.PUT_LINE(resultado);
-END;
 
 -- PRCEDURES (30 PONTOS)
 /* 
