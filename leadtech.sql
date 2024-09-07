@@ -1021,6 +1021,15 @@ BEGIN
                              ' | Atual: ' || TO_CHAR(rec.Atual, 'YYYY-MM-DD') ||
                              ' | Próximo: ' || NVL(TO_CHAR(rec.Proximo, 'YYYY-MM-DD'), 'Vazio'));
     END LOOP;
+    EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum dado encontrado no histórico de compras.');
+    WHEN VALUE_ERROR THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Valor inesperado encontrado ao processar os dados.');
+    WHEN TOO_MANY_ROWS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Mais linhas retornadas do que o esperado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao processar o histórico de compras: ' || SQLERRM);
 END;
 
 -- Execução do procedimento Relatorio_Historico_Cliente
