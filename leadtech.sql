@@ -988,11 +988,11 @@ END;
 EXEC OBTER_DADOS_CLIENTE_PRODUTO;
 
 /*
-Relatorio_Historico_Cliente: Este procedimento era um relatório detalhado sobre o histórico de compras dos clientes, 
+Historico_Cliente_Detalhado: Este procedimento mostra um relatório detalhado sobre o histórico de compras dos clientes, 
 exibindo a data da compra atual,  a data da compra anterior e a data da próxima compra. 
 Se não houver dados para a compra anterior ou a próxima, ele exibe "Vazio".
 */
-CREATE OR REPLACE PROCEDURE Relatorio_Historico_Cliente AS
+CREATE OR REPLACE PROCEDURE Historico_Cliente_Detalhado AS
 BEGIN
     FOR rec IN (
         SELECT
@@ -1032,7 +1032,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Erro ao processar o histórico de compras: ' || SQLERRM);
 END;
 
--- Execução do procedimento Relatorio_Historico_Cliente
-EXEC Relatorio_Historico_Cliente;
+-- Execução do procedimento Historico_Cliente_Detalhado
+EXEC Historico_Cliente_Detalhado;
 
 -- TRIGGERS (30 PONTOS)
