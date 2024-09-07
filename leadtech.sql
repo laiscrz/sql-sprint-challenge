@@ -888,10 +888,8 @@ BEGIN
                   '"nomeProduto": "' || v_nomeProduto || '", ' || 
                   '"categoriaProduto": "' || v_categoriaProduto || '", ' ||
                   '"valorProduto": ' || v_valorProduto || '}';
-
         v_separator := ',' || CHR(10);
     END LOOP;
-
     v_json := v_json || ']';
     RETURN v_json;
 EXCEPTION
@@ -906,12 +904,59 @@ EXCEPTION
 END;
 
 /*
-
+calcular_compras_por_categoria : calcula manualmente as compras por categoria e retorna um cursor com os resultados. 
+Ela substitui o bloco anônimo presente no script, separando a logica de contagem da execucao e teste, 
+o que melhora a modularidade e a manutenção do codigo.
 */
+CREATE OR REPLACE FUNCTION calcular_compras_por_categoria RETURN SYS_REFCURSOR IS
+    v_cursor SYS_REFCURSOR;
+    v_categoriaProduto Produto.categoriaProduto%TYPE;
+    v_total_compras NUMBER;
+    v_resultado SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+        SELECT DISTINCT p.categoriaProduto
+        FROM Produto p;
+    OPEN v_resultado FOR 
+        SELECT categoriaProduto, total_compras
+        FROM (
+            SELECT p.categoriaProduto,
+                   (SELECT COUNT(*)
+                    FROM Historico_Cliente h
+                    JOIN Produto p2 ON h.idProduto = p2.idProduto
+                    WHERE p2.categoriaProduto = p.categoriaProduto) AS total_compras
+            FROM Produto p
+            GROUP BY p.categoriaProduto
+        );
+    RETURN v_resultado;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhuma categoria encontrada.');
+    WHEN VALUE_ERROR THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Valor inesperado encontrado ao processar as compras.');
+    WHEN TOO_MANY_ROWS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Mais linhas retornadas do que o esperado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao processar as compras: ' || SQLERRM);
+END calcular_compras_por_categoria;
+
+-- Teste da funcao calcular_compras_por_categoria
+DECLARE
+    v_cursor SYS_REFCURSOR;
+    v_categoriaProduto Produto.categoriaProduto%TYPE;
+    v_total_compras NUMBER;
+BEGIN
+    v_cursor := calcular_compras_por_categoria;
+    LOOP
+        FETCH v_cursor INTO v_categoriaProduto, v_total_compras;
+        EXIT WHEN v_cursor%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE('Categoria: ' || v_categoriaProduto || ' | Total de Compras: ' || v_total_compras);
+    END LOOP;
+    CLOSE v_cursor;
+END;
 
 
-
--- PRCEDURES (30 PONTOS)
+-- PROCEDURES (30 PONTOS)
 /* 
 obter_dados_cliente_produto: Este procedimento é responsável por recuperar dados de 
 clientes e produtos a partir de tabelas relacionadas (JOIN), converter esses dados em uma string JSON
