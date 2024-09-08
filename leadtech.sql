@@ -1056,5 +1056,56 @@ CREATE TABLE Auditoria (
 );
 
 /*
+Trigger: trig_auditoria_produto
+    Objetivo: Registrar todas as operações de INSERT, UPDATE e DELETE na tabela Produto.
+    A cada operação, o trigger insere um registro na tabela Auditoria com os dados antigos e novos, nome do usuário que fez a operação,
+    tipo da operação (INSERT, UPDATE, DELETE) e a data da operação.
+*/
+CREATE OR REPLACE TRIGGER trig_auditoria_produto
+AFTER INSERT OR UPDATE OR DELETE ON Produto
+FOR EACH ROW
+DECLARE
+    v_usuario VARCHAR2(50) := USER;
+    v_dados_antigos VARCHAR2(4000);
+    v_dados_novos VARCHAR2(4000);
+BEGIN
+    -- Concatena os dados antigos, se disponíveis
+    IF INSERTING THEN
+        v_dados_antigos := NULL;
+        v_dados_novos := 'ID: ' || :NEW.idProduto || ', Nome: ' || :NEW.nomeProduto || 
+                         ', Estrelas: ' || :NEW.estrelas || ', Categoria: ' || :NEW.categoriaProduto || 
+                         ', Quantidade em Estoque: ' || :NEW.qtdEstoque || 
+                         ', Data Compra: ' || TO_CHAR(:NEW.dataCompraProduto, 'DD/MM/YYYY') ||
+                         ', Valor: ' || :NEW.valorProduto;
+        INSERT INTO Auditoria (nome_tabela, operacao, usuario, data_operacao, dados_antigos, dados_novos)
+        VALUES ('Produto', 'INSERT', v_usuario, SYSDATE, v_dados_antigos, v_dados_novos);
+        
+    ELSIF DELETING THEN
+        v_dados_antigos := 'ID: ' || :OLD.idProduto || ', Nome: ' || :OLD.nomeProduto || 
+                           ', Estrelas: ' || :OLD.estrelas || ', Categoria: ' || :OLD.categoriaProduto || 
+                           ', Quantidade em Estoque: ' || :OLD.qtdEstoque || 
+                           ', Data Compra: ' || TO_CHAR(:OLD.dataCompraProduto, 'DD/MM/YYYY') ||
+                           ', Valor: ' || :OLD.valorProduto;
+        v_dados_novos := NULL;
+        INSERT INTO Auditoria (nome_tabela, operacao, usuario, data_operacao, dados_antigos, dados_novos)
+        VALUES ('Produto', 'DELETE', v_usuario, SYSDATE, v_dados_antigos, v_dados_novos);
+        
+    ELSIF UPDATING THEN
+        v_dados_antigos := 'ID: ' || :OLD.idProduto || ', Nome: ' || :OLD.nomeProduto || 
+                           ', Estrelas: ' || :OLD.estrelas || ', Categoria: ' || :OLD.categoriaProduto || 
+                           ', Quantidade em Estoque: ' || :OLD.qtdEstoque || 
+                           ', Data Compra: ' || TO_CHAR(:OLD.dataCompraProduto, 'DD/MM/YYYY') ||
+                           ', Valor: ' || :OLD.valorProduto;
+        v_dados_novos := 'ID: ' || :NEW.idProduto || ', Nome: ' || :NEW.nomeProduto || 
+                         ', Estrelas: ' || :NEW.estrelas || ', Categoria: ' || :NEW.categoriaProduto || 
+                         ', Quantidade em Estoque: ' || :NEW.qtdEstoque || 
+                         ', Data Compra: ' || TO_CHAR(:NEW.dataCompraProduto, 'DD/MM/YYYY') ||
+                         ', Valor: ' || :NEW.valorProduto;
+        INSERT INTO Auditoria (nome_tabela, operacao, usuario, data_operacao, dados_antigos, dados_novos)
+        VALUES ('Produto', 'UPDATE', v_usuario, SYSDATE, v_dados_antigos, v_dados_novos);
+    END IF;
+END;
 
+/*
+    Blocos para testar p trigger
 */
