@@ -1107,5 +1107,14 @@ BEGIN
 END;
 
 /*
-    Blocos para testar p trigger
+    Blocos para testar o trigger
 */
+
+-- TESTE TRIGGER -> INSERT
+
+-- TESTE TRIGGER -> UPDATE
+
+-- TESTE TRIGGER -> DELETE
+
+
+-- TESTE TRIGGER -> VISUALIZANDO A TABELA AUDITORIA
