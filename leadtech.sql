@@ -11,6 +11,8 @@ Fabrico Torres Antonio - RM:97916 - Turma : 2TDSPH
 Lucca Raphael Pereira dos Santos - RM 99675 - Turma : 2TDSPZ -> PROFESSOR: Milton Goya
 */
 
+/* -------------------------------------------- SPRINT 1 --------------------------------------------*/
+
 -- Esses comandos exclui se a tabela ja existir, e tambem exclui
 -- juntos com as restricoes que ela obter (chave estrangeira).
 drop table lead cascade constraints;
@@ -354,6 +356,8 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Cliente: ' || v_nome_cliente || ', Pesquisa: ' || v_id_pesquisa || ', Localização: ' || v_cidade);
     END LOOP;
 END;
+
+/* -------------------------------------------- SPRINT 2 --------------------------------------------*/
 
 -- FUNÇÕES DE VALIDAÇÃO DE DADOS
 
@@ -853,7 +857,7 @@ END Relatorio_Clientes_Por_Localizacao;
 -- Chamando procedure que utiliza ( funções, inner Join, order by, sum ou count.)
 EXEC Relatorio_Clientes_Por_Localizacao;
 
-/* ----------------------------SPRINT 3 ----------------------------*/
+/* -------------------------------------------- SPRINT 3 --------------------------------------------*/
 
 -- FUNCTIONS (30 PONTOS)
 /* 
