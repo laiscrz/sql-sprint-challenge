@@ -1071,7 +1071,7 @@ DECLARE
 BEGIN
     -- Concatena os dados antigos, se disponíveis
     IF INSERTING THEN
-        v_dados_antigos := NULL;
+        v_dados_antigos := NULL; -- Inserindo novos valores, por isso NAO TEM DADOS ANTIGOS
         v_dados_novos := 'ID: ' || :NEW.idProduto || ', Nome: ' || :NEW.nomeProduto || 
                          ', Estrelas: ' || :NEW.estrelas || ', Categoria: ' || :NEW.categoriaProduto || 
                          ', Quantidade em Estoque: ' || :NEW.qtdEstoque || 
@@ -1086,7 +1086,7 @@ BEGIN
                            ', Quantidade em Estoque: ' || :OLD.qtdEstoque || 
                            ', Data Compra: ' || TO_CHAR(:OLD.dataCompraProduto, 'DD/MM/YYYY') ||
                            ', Valor: ' || :OLD.valorProduto;
-        v_dados_novos := NULL;
+        v_dados_novos := NULL; -- os dados sao DELETADOS, por isso NAO TEM novos valores
         INSERT INTO Auditoria (nome_tabela, operacao, usuario, data_operacao, dados_antigos, dados_novos)
         VALUES ('Produto', 'DELETE', v_usuario, SYSDATE, v_dados_antigos, v_dados_novos);
         
@@ -1111,10 +1111,46 @@ END;
 */
 
 -- TESTE TRIGGER -> INSERT
+BEGIN
+    INSERT INTO Produto (idProduto, nomeProduto, estrelas, categoriaProduto, qtdEstoque, dataCompraProduto, valorProduto)
+    VALUES (2, 'Batom', 5, 'Maquiagem', 50, TO_DATE('2024-09-10', 'YYYY-MM-DD'), 29.99);
+    
+    DBMS_OUTPUT.PUT_LINE('Registros na tabela Auditoria após INSERT:');
+    FOR r IN (SELECT * FROM Auditoria WHERE nome_tabela = 'Produto' AND operacao = 'INSERT') LOOP
+        DBMS_OUTPUT.PUT_LINE(r.nome_tabela || ' | ' || r.operacao || ' | ' || r.usuario || ' | ' || r.data_operacao || ' | ' || r.dados_antigos || ' | ' || r.dados_novos);
+    END LOOP;
+END;
 
 -- TESTE TRIGGER -> UPDATE
+BEGIN
+    -- Atualizar o produto na tabela Produto para testar o trigger
+    UPDATE Produto
+    SET nomeProduto = 'Batom Colorido', estrelas = 4
+    WHERE idProduto = 7;
+    
+    -- Verificar a tabela Auditoria para confirmar o registro da operação UPDATE
+    DBMS_OUTPUT.PUT_LINE('Registros na tabela Auditoria após UPDATE:');
+    FOR r IN (SELECT * FROM Auditoria WHERE nome_tabela = 'Produto' AND operacao = 'UPDATE') LOOP
+        DBMS_OUTPUT.PUT_LINE(r.nome_tabela || ' | ' || r.operacao || ' | ' || r.usuario || ' | ' || r.data_operacao || ' | ' || r.dados_antigos || ' | ' || r.dados_novos);
+    END LOOP;
+END;
+
 
 -- TESTE TRIGGER -> DELETE
+BEGIN
+    -- Excluir o produto da tabela Produto para testar o trigger
+    DELETE FROM Produto WHERE idProduto = 2;
+    
+    -- Verificar a tabela Auditoria para confirmar o registro da operação DELETE
+    DBMS_OUTPUT.PUT_LINE('Registros na tabela Auditoria após DELETE:');
+    FOR r IN (SELECT * FROM Auditoria WHERE nome_tabela = 'Produto' AND operacao = 'DELETE') LOOP
+        DBMS_OUTPUT.PUT_LINE(r.nome_tabela || ' | ' || r.operacao || ' | ' || r.usuario || ' | ' || r.data_operacao || ' | ' || r.dados_antigos || ' | ' || r.dados_novos);
+    END LOOP;
+END;
 
 
 -- TESTE TRIGGER -> VISUALIZANDO A TABELA AUDITORIA
+SELECT * FROM Auditoria;
+SELECT * FROM produto;
+SET SERVEROUTPUT ON;
+SET VERIFY OFF;
