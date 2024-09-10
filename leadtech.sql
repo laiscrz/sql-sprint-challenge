@@ -898,13 +898,13 @@ BEGIN
     RETURN v_json;
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        RETURN 'Nenhum dado encontrado no cursor.';
+        DBMS_OUTPUT.PUT_LINE('Nenhum dado encontrado no cursor.');
     WHEN VALUE_ERROR THEN
-        RETURN 'Erro de conversão de tipo de dado ao processar dados do cursor.';
-    WHEN TOO_MANY_ROWS THEN
-        RETURN 'Erro: Mais linhas retornadas do que o esperado.';
+        DBMS_OUTPUT.PUT_LINE('Erro de conversão de tipo de dado ao processar dados do cursor.');
+    WHEN INVALID_CURSOR THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: O cursor está inválido ou fechado.');
     WHEN OTHERS THEN
-        RETURN 'Erro ao converter dados para JSON: ' || SQLERRM;
+        DBMS_OUTPUT.PUT_LINE('Erro ao converter dados para JSON: ' || SQLERRM);
 END;
 
 /*
@@ -938,8 +938,8 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Nenhuma categoria encontrada.');
     WHEN VALUE_ERROR THEN
         DBMS_OUTPUT.PUT_LINE('Erro: Valor inesperado encontrado ao processar as compras.');
-    WHEN TOO_MANY_ROWS THEN
-        DBMS_OUTPUT.PUT_LINE('Erro: Mais linhas retornadas do que o esperado.');
+    WHEN INVALID_CURSOR THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: O cursor está inválido ou fechado.');
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro ao processar as compras: ' || SQLERRM);
 END calcular_compras_por_categoria;
@@ -985,6 +985,8 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Nenhum dado encontrado.');
     WHEN TOO_MANY_ROWS THEN
         DBMS_OUTPUT.PUT_LINE('Erro: Muitos registros retornados.');
+    WHEN INVALID_CURSOR THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Cursor inválido ou não inicializado.');
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro inesperado: ' || SQLERRM);
 END;
@@ -1025,7 +1027,7 @@ BEGIN
                              ' | Atual: ' || TO_CHAR(rec.Atual, 'YYYY-MM-DD') ||
                              ' | Próximo: ' || NVL(TO_CHAR(rec.Proximo, 'YYYY-MM-DD'), 'Vazio'));
     END LOOP;
-    EXCEPTION
+EXCEPTION
     WHEN NO_DATA_FOUND THEN
         DBMS_OUTPUT.PUT_LINE('Nenhum dado encontrado no histórico de compras.');
     WHEN VALUE_ERROR THEN
