@@ -944,7 +944,7 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro ao processar as compras: ' || SQLERRM);
 END calcular_compras_por_categoria;
 
--- Teste da funcao calcular_compras_por_categoria
+-- TESTE: da funcao calcular_compras_por_categoria (com sucesso)
 DECLARE
     v_cursor SYS_REFCURSOR;
     v_categoriaProduto Produto.categoriaProduto%TYPE;
@@ -954,10 +954,28 @@ BEGIN
     LOOP
         FETCH v_cursor INTO v_categoriaProduto, v_total_compras;
         EXIT WHEN v_cursor%NOTFOUND;
-        DBMS_OUTPUT.PUT_LINE('Categoria: ' || v_categoriaProduto || ' | Total de Compras: ' || v_total_compras);
+        DBMS_OUTPUT.PUT_LINE('Categoria: ' || v_categoriaProduto || 
+        ' | Total de Compras: ' || v_total_compras);
     END LOOP;
     CLOSE v_cursor;
 END;
+
+-- TESTE: da funcao calcular_compras_por_categoria (que caia na exception INVALID_CURSOR)
+/*DECLARE
+    v_cursor SYS_REFCURSOR;
+    v_categoriaProduto Produto.categoriaProduto%TYPE;
+    v_total_compras NUMBER;
+BEGIN
+    v_cursor := calcular_compras_por_categoria;
+    CLOSE v_cursor;
+    LOOP
+        FETCH v_cursor INTO v_categoriaProduto, v_total_compras;
+        EXIT WHEN v_cursor%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE('Categoria: ' || v_categoriaProduto || 
+        ' | Total de Compras: ' || v_total_compras);
+    END LOOP;
+END;*/
+
 
 
 -- PROCEDURES (30 PONTOS)
