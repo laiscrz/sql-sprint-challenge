@@ -907,74 +907,66 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro ao converter dados para JSON: ' || SQLERRM);
 END;
 
+-- TESTE: da funcao converte_json_func (com sucesso)
+
+
+
+
+
+
 /*
 calcular_compras_por_categoria : calcula manualmente as compras por categoria e retorna um cursor com os resultados. 
 Ela substitui o bloco anônimo presente no script, separando a logica de contagem da execucao e teste, 
 o que melhora a modularidade e a manutenção do codigo.
 */
-CREATE OR REPLACE FUNCTION calcular_compras_por_categoria RETURN SYS_REFCURSOR IS
-    v_cursor SYS_REFCURSOR;
+CREATE OR REPLACE FUNCTION calcular_compras_por_categoria RETURN VARCHAR2 IS
     v_categoriaProduto Produto.categoriaProduto%TYPE;
     v_total_compras NUMBER;
-    v_resultado SYS_REFCURSOR;
+    v_resultado VARCHAR2(4000); 
 BEGIN
-    OPEN v_cursor FOR
-        SELECT DISTINCT p.categoriaProduto
-        FROM Produto p;
-    OPEN v_resultado FOR 
-        SELECT categoriaProduto, total_compras
-        FROM (
-            SELECT p.categoriaProduto,
-                   (SELECT COUNT(*)
-                    FROM Historico_Cliente h
-                    JOIN Produto p2 ON h.idProduto = p2.idProduto
-                    WHERE p2.categoriaProduto = p.categoriaProduto) AS total_compras
-            FROM Produto p
-            GROUP BY p.categoriaProduto
-        );
+    v_resultado := '';
+
+    FOR r IN (
+        SELECT p.categoriaProduto,
+               (SELECT COUNT(*)
+                FROM Historico_Cliente h
+                JOIN Produto p2 ON h.idProduto = p2.idProduto
+                WHERE p2.categoriaProduto = p.categoriaProduto) AS total_compras
+        FROM Produto p
+        GROUP BY p.categoriaProduto
+    ) LOOP
+        v_resultado := v_resultado || 'Categoria: ' || r.categoriaProduto || ' | '|| ' Total de Compras: ' || r.total_compras || CHR(10);
+    END LOOP;
+
+    IF v_resultado IS NULL OR v_resultado = '' THEN
+        v_resultado := 'Nenhuma categoria encontrada.';
+    END IF;
+
     RETURN v_resultado;
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('Nenhuma categoria encontrada.');
+        RETURN 'Nenhuma categoria encontrada.';
     WHEN VALUE_ERROR THEN
-        DBMS_OUTPUT.PUT_LINE('Erro: Valor inesperado encontrado ao processar as compras.');
-    WHEN INVALID_CURSOR THEN
-        DBMS_OUTPUT.PUT_LINE('Erro: O cursor está inválido ou fechado.');
+        RETURN 'Erro: Valor inesperado encontrado ao processar as compras.';
     WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Erro ao processar as compras: ' || SQLERRM);
+        RETURN 'Erro ao processar as compras: ' || SQLERRM;
 END calcular_compras_por_categoria;
+
 
 -- TESTE: da funcao calcular_compras_por_categoria (com sucesso)
 DECLARE
-    v_cursor SYS_REFCURSOR;
-    v_categoriaProduto Produto.categoriaProduto%TYPE;
-    v_total_compras NUMBER;
+    v_resultado VARCHAR2(4000);
 BEGIN
-    v_cursor := calcular_compras_por_categoria;
-    LOOP
-        FETCH v_cursor INTO v_categoriaProduto, v_total_compras;
-        EXIT WHEN v_cursor%NOTFOUND;
-        DBMS_OUTPUT.PUT_LINE('Categoria: ' || v_categoriaProduto || 
-        ' | Total de Compras: ' || v_total_compras);
-    END LOOP;
-    CLOSE v_cursor;
+    v_resultado := calcular_compras_por_categoria;
+
+    DBMS_OUTPUT.PUT_LINE(v_resultado);
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao testar a função: ' || SQLERRM);
 END;
 
 -- TESTE: da funcao calcular_compras_por_categoria (que caia na exception INVALID_CURSOR)
-/*DECLARE
-    v_cursor SYS_REFCURSOR;
-    v_categoriaProduto Produto.categoriaProduto%TYPE;
-    v_total_compras NUMBER;
-BEGIN
-    v_cursor := calcular_compras_por_categoria;
-    CLOSE v_cursor;
-    LOOP
-        FETCH v_cursor INTO v_categoriaProduto, v_total_compras;
-        EXIT WHEN v_cursor%NOTFOUND;
-        DBMS_OUTPUT.PUT_LINE('Categoria: ' || v_categoriaProduto || 
-        ' | Total de Compras: ' || v_total_compras);
-    END LOOP;
-END;*/
+
 
 
 
@@ -1017,34 +1009,59 @@ exibindo a data da compra atual,  a data da compra anterior e a data da próxima
 Se não houver dados para a compra anterior ou a próxima, ele exibe "Vazio".
 */
 CREATE OR REPLACE PROCEDURE Historico_Cliente_Detalhado AS
+    CURSOR c_historico IS
+        SELECT idHistCompra, idCliente, idProduto, dataCompraProduto
+        FROM Historico_Cliente
+        ORDER BY idHistCompra;
+        
+    v_idHistCompra NUMBER;
+    v_idCliente NUMBER;
+    v_idProduto NUMBER;
+    v_dataCompraProduto DATE;
+
+    v_idHistCompra_prev NUMBER := NULL;
+    v_dataCompraProduto_prev DATE := NULL;
+    v_dataCompraProduto_next DATE := NULL;
+    
 BEGIN
-    FOR rec IN (
-        SELECT
-            idHistCompra,
-            idCliente,
-            idProduto,
-            dataCompraProduto,
-            -- Subconsulta:  valor da linha anterior
-            (SELECT dataCompraProduto
-             FROM Historico_Cliente hc2
-             WHERE hc2.idHistCompra < hc1.idHistCompra
-             ORDER BY hc2.idHistCompra DESC
-             FETCH FIRST 1 ROW ONLY) AS Anterior,
-            -- atual
-            hc1.dataCompraProduto AS Atual,
-            -- Subconsulta: valor da próxima linha
-            (SELECT dataCompraProduto
-             FROM Historico_Cliente hc3
-             WHERE hc3.idHistCompra > hc1.idHistCompra
-             ORDER BY hc3.idHistCompra ASC
-             FETCH FIRST 1 ROW ONLY) AS Proximo
-        FROM Historico_Cliente hc1
-    ) LOOP
-        DBMS_OUTPUT.PUT_LINE('ID: ' || rec.idHistCompra ||
-                             ' | Anterior: ' || NVL(TO_CHAR(rec.Anterior, 'YYYY-MM-DD'), 'Vazio') ||
-                             ' | Atual: ' || TO_CHAR(rec.Atual, 'YYYY-MM-DD') ||
-                             ' | Próximo: ' || NVL(TO_CHAR(rec.Proximo, 'YYYY-MM-DD'), 'Vazio'));
+    OPEN c_historico;
+    
+    FETCH c_historico INTO v_idHistCompra, v_idCliente, v_idProduto, v_dataCompraProduto;
+    
+    IF c_historico%NOTFOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nenhum dado encontrado no histórico de compras.');
+        CLOSE c_historico;
+        RETURN;
+    END IF;
+
+    FETCH c_historico INTO v_idHistCompra_prev, v_idCliente, v_idProduto, v_dataCompraProduto_next;
+
+    LOOP
+        DBMS_OUTPUT.PUT_LINE('ID: ' || v_idHistCompra ||
+                             ' | Anterior: ' || NVL(TO_CHAR(v_dataCompraProduto_prev, 'YYYY-MM-DD'), 'Vazio') ||
+                             ' | Atual: ' || TO_CHAR(v_dataCompraProduto, 'YYYY-MM-DD') ||
+                             ' | Próximo: ' || NVL(TO_CHAR(v_dataCompraProduto_next, 'YYYY-MM-DD'), 'Vazio'));
+
+        v_dataCompraProduto_prev := v_dataCompraProduto;
+        v_idHistCompra := v_idHistCompra_prev;
+        v_dataCompraProduto := v_dataCompraProduto_next;
+        
+        FETCH c_historico INTO v_idHistCompra_prev, v_idCliente, v_idProduto, v_dataCompraProduto_next;
+        
+        EXIT WHEN c_historico%NOTFOUND;
+
+        IF c_historico%NOTFOUND THEN
+            v_dataCompraProduto_next := NULL;
+        END IF;
     END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('ID: ' || v_idHistCompra ||
+                         ' | Anterior: ' || NVL(TO_CHAR(v_dataCompraProduto_prev, 'YYYY-MM-DD'), 'Vazio') ||
+                         ' | Atual: ' || TO_CHAR(v_dataCompraProduto, 'YYYY-MM-DD') ||
+                         ' | Próximo: Vazio');
+
+    CLOSE c_historico;
+    
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
         DBMS_OUTPUT.PUT_LINE('Nenhum dado encontrado no histórico de compras.');
@@ -1136,40 +1153,96 @@ BEGIN
     VALUES (2, 'Batom', 5, 'Maquiagem', 50, TO_DATE('2024-09-10', 'YYYY-MM-DD'), 29.99);
     
     DBMS_OUTPUT.PUT_LINE('Registros na tabela Auditoria após INSERT:');
-    FOR r IN (SELECT * FROM Auditoria WHERE nome_tabela = 'Produto' AND operacao = 'INSERT') LOOP
-        DBMS_OUTPUT.PUT_LINE(r.nome_tabela || ' | ' || r.operacao || ' | ' || r.usuario || ' | ' || r.data_operacao || ' | ' || r.dados_antigos || ' | ' || r.dados_novos);
+    
+    FOR r IN (
+        SELECT * 
+        FROM Auditoria 
+        WHERE nome_tabela = 'Produto' 
+          AND operacao = 'INSERT'
+    ) LOOP
+        -- Imprimir as informações do registro com formatação melhorada
+        DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+        DBMS_OUTPUT.PUT_LINE('Nome da Tabela   : ' || r.nome_tabela);
+        DBMS_OUTPUT.PUT_LINE('Operação          : ' || r.operacao);
+        DBMS_OUTPUT.PUT_LINE('Usuário           : ' || r.usuario);
+        DBMS_OUTPUT.PUT_LINE('Data da Operação  : ' || TO_CHAR(r.data_operacao, 'YYYY-MM-DD HH24:MI:SS'));
+        DBMS_OUTPUT.PUT_LINE('Dados Antigos     : ' || NVL(r.dados_antigos, 'NENHUM DADO ANTERIOR'));
+        DBMS_OUTPUT.PUT_LINE('Dados Novos       : ' || NVL(r.dados_novos, 'Nenhum dado novo'));
+        DBMS_OUTPUT.PUT_LINE('----------------------------------------');
     END LOOP;
 END;
 
 -- TESTE TRIGGER -> UPDATE
 BEGIN
-    -- Atualizar o produto na tabela Produto para testar o trigger
     UPDATE Produto
     SET nomeProduto = 'Batom Colorido', estrelas = 4
-    WHERE idProduto = 7;
+    WHERE idProduto = 2;
     
-    -- Verificar a tabela Auditoria para confirmar o registro da operação UPDATE
     DBMS_OUTPUT.PUT_LINE('Registros na tabela Auditoria após UPDATE:');
-    FOR r IN (SELECT * FROM Auditoria WHERE nome_tabela = 'Produto' AND operacao = 'UPDATE') LOOP
-        DBMS_OUTPUT.PUT_LINE(r.nome_tabela || ' | ' || r.operacao || ' | ' || r.usuario || ' | ' || r.data_operacao || ' | ' || r.dados_antigos || ' | ' || r.dados_novos);
+    
+    FOR r IN (
+        SELECT * 
+        FROM Auditoria 
+        WHERE nome_tabela = 'Produto' 
+          AND operacao = 'UPDATE'
+    ) LOOP
+        DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+        DBMS_OUTPUT.PUT_LINE('Nome da Tabela   : ' || r.nome_tabela);
+        DBMS_OUTPUT.PUT_LINE('Operação          : ' || r.operacao);
+        DBMS_OUTPUT.PUT_LINE('Usuário           : ' || r.usuario);
+        DBMS_OUTPUT.PUT_LINE('Data da Operação  : ' || TO_CHAR(r.data_operacao, 'YYYY-MM-DD HH24:MI:SS'));
+        DBMS_OUTPUT.PUT_LINE('Dados Antigos     : ' || r.dados_antigos);
+        DBMS_OUTPUT.PUT_LINE('Dados Novos       : ' || r.dados_novos);
+        DBMS_OUTPUT.PUT_LINE('----------------------------------------');
     END LOOP;
 END;
 
 
 -- TESTE TRIGGER -> DELETE
 BEGIN
-    -- Excluir o produto da tabela Produto para testar o trigger
     DELETE FROM Produto WHERE idProduto = 2;
     
-    -- Verificar a tabela Auditoria para confirmar o registro da operação DELETE
     DBMS_OUTPUT.PUT_LINE('Registros na tabela Auditoria após DELETE:');
-    FOR r IN (SELECT * FROM Auditoria WHERE nome_tabela = 'Produto' AND operacao = 'DELETE') LOOP
-        DBMS_OUTPUT.PUT_LINE(r.nome_tabela || ' | ' || r.operacao || ' | ' || r.usuario || ' | ' || r.data_operacao || ' | ' || r.dados_antigos || ' | ' || r.dados_novos);
+    
+    FOR r IN (
+        SELECT * 
+        FROM Auditoria 
+        WHERE nome_tabela = 'Produto' 
+          AND operacao = 'DELETE'
+    ) LOOP
+        DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+        DBMS_OUTPUT.PUT_LINE('Nome da Tabela   : ' || r.nome_tabela);
+        DBMS_OUTPUT.PUT_LINE('Operação          : ' || r.operacao);
+        DBMS_OUTPUT.PUT_LINE('Usuário           : ' || r.usuario);
+        DBMS_OUTPUT.PUT_LINE('Data da Operação  : ' || TO_CHAR(r.data_operacao, 'YYYY-MM-DD HH24:MI:SS'));
+        DBMS_OUTPUT.PUT_LINE('Dados Antigos     : ' || r.dados_antigos);
+        DBMS_OUTPUT.PUT_LINE('Dados Novos       : ' || r.dados_novos || 'NAO CONTEM (DADOS DELETADOS)');
+        DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+    END LOOP;
+END;
+
+-- TESTE TRIGGER -> VISUALIZANDO A TABELA AUDITORIA
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Registros da tabela Auditoria:');
+    
+    FOR r IN (
+        SELECT nome_tabela,operacao,usuario,
+               data_operacao,dados_antigos,dados_novos
+        FROM Auditoria
+    ) LOOP
+        DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+        DBMS_OUTPUT.PUT_LINE('Nome da Tabela   : ' || r.nome_tabela);
+        DBMS_OUTPUT.PUT_LINE('Operação          : ' || r.operacao);
+        DBMS_OUTPUT.PUT_LINE('Usuário           : ' || r.usuario);
+        DBMS_OUTPUT.PUT_LINE('Data da Operação  : ' || TO_CHAR(r.data_operacao, 'YYYY-MM-DD'));
+        DBMS_OUTPUT.PUT_LINE('Dados Antigos     : ' || NVL(r.dados_antigos, 'Nenhum dado anterior'));
+        DBMS_OUTPUT.PUT_LINE('Dados Novos       : ' || NVL(r.dados_novos, 'Nenhum dado novo'));
+        DBMS_OUTPUT.PUT_LINE('----------------------------------------');
     END LOOP;
 END;
 
 
--- TESTE TRIGGER -> VISUALIZANDO A TABELA AUDITORIA
+
 SELECT * FROM Auditoria;
 SELECT * FROM produto;
 SET SERVEROUTPUT ON;
