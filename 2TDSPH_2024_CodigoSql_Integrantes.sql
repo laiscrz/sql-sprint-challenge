@@ -9,6 +9,8 @@ Charlene Aparecida Estevam Mendes Fialho - RM552252 - Turma : 2TDSPH
 Lais Alves Da Silva Cruz - RM:552258 - Turma : 2TDSPH
 Fabrico Torres Antonio - RM:97916 - Turma : 2TDSPH
 Lucca Raphael Pereira dos Santos - RM 99675 - Turma : 2TDSPZ -> PROFESSOR: Milton Goya
+
+ --------------------------- ESSE SCRIPT CONTEM OS CODIGOS DAS SPRINTS 1,2 E 3  ---------------------------
 */
 
 /* -------------------------------------------- SPRINT 1 --------------------------------------------*/
@@ -857,10 +859,16 @@ END Relatorio_Clientes_Por_Localizacao;
 -- Chamando procedure que utiliza ( funções, inner Join, order by, sum ou count.)
 EXEC Relatorio_Clientes_Por_Localizacao;
 
+
+
 /* -------------------------------------------- SPRINT 3 --------------------------------------------*/
 
--- FUNCTIONS (30 PONTOS)
+
+
+-- ------------------------- FUNCTIONS (30 PONTOS) -------------------------
+
 /* 
+------------------------- PRIMEIRA FUNCAO -------------------------
 converte_json_func:  Esta função tem como objetivo converter um conjunto de dados 
 retornado por um cursor (SYS_REFCURSOR) em uma string JSON.
 OBS. será chamada e TESTADA na procedure que será implementada posteriormente.
@@ -907,6 +915,7 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro ao converter dados para JSON: ' || SQLERRM);
 END;
 
+------------------------- TESTES DA FUNTION : converte_json_func -------------------------
 -- TESTE: da funcao converte_json_func similar a nossa procedure (com sucesso)
 DECLARE
     c_cliente_produto SYS_REFCURSOR;
@@ -944,7 +953,7 @@ BEGIN
     -- Chamar a função e capturar o resultado JSON (deve gerar um erro de VALUE_ERROR)
     v_json_resultado := converte_json_func(c_cliente_produto);
 
-    -- Exibir o resultado JSON no DBMS_OUTPUT (não deve chegar aqui por causa do erro)
+    -- Exibir o resultado JSON no DBMS_OUTPUT 
     DBMS_OUTPUT.PUT_LINE('Resultado em JSON:');
     DBMS_OUTPUT.PUT_LINE(v_json_resultado);
 
@@ -954,7 +963,11 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro durante o teste: ' || SQLERRM);
 END;
 
+/*----------------------------------------------------------------------------------------------------*/
+
+
 /*
+------------------------- SEGUNDA FUNCAO -------------------------
 calcular_compras_por_categoria : calcula manualmente as compras por categoria e retorna um cursor com os resultados. 
 Ela substitui o bloco anônimo presente no script, separando a logica de contagem da execucao e teste, 
 o que melhora a modularidade e a manutenção do codigo.
@@ -984,19 +997,19 @@ BEGIN
 
     RETURN v_resultado;
 EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        RETURN 'Nenhuma categoria encontrada.';
+    WHEN ACCESS_INTO_NULL THEN
+    RETURN 'Erro: Tentativa de acessar um valor nulo em um objeto.';
     WHEN VALUE_ERROR THEN
         RETURN 'Erro: Valor inesperado encontrado ao processar as compras.';
     WHEN INVALID_NUMBER THEN
         RETURN 'Erro: Tentativa de conversão de string para número inválido.';
     WHEN INVALID_CURSOR THEN
-        DBMS_OUTPUT.PUT_LINE('Erro: Cursor inválido detectado.');
+        RETURN 'Erro: ORA-01001: cursor inválido.';
     WHEN OTHERS THEN
         RETURN 'Erro ao processar as compras: ' || SQLERRM;
 END calcular_compras_por_categoria;
 
-
+------------------------- TESTES DA FUNTION: calcular_compras por_categoria -------------------------
 -- TESTE: da funcao calcular_compras_por_categoria (com sucesso)
 DECLARE
     v_resultado VARCHAR2(4000);
@@ -1032,10 +1045,11 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro: ' || SQLERRM);
 END;
 
+/* ---------------------------------------------------------------------------------------------------- */
 
-
--- PROCEDURES (30 PONTOS)
+-- ------------------------- PROCEDURES (30 PONTOS) -------------------------
 /* 
+------------------------- PRIMEIRA PROCEDURE -------------------------
 obter_dados_cliente_produto: Este procedimento é responsável por recuperar dados de 
 clientes e produtos a partir de tabelas relacionadas (JOIN), converter esses dados em uma string JSON.
 Ele precisa retornar no minimo 5 registros solicitado pela disciplina (usado como parametro)
@@ -1088,6 +1102,8 @@ EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro inesperado: ' || SQLERRM);
 END;
+
+------------------------- TESTES DA PROCEDURE : obter_dados_cliente -------------------------
 -- Executa a procedure OBTER_DADOS_CLIENTE_PRODUTO (COM SUCESSO)
 EXEC OBTER_DADOS_CLIENTE_PRODUTO(5); -- como solicitado pela disciplina precisa retornar no minimo 5 valores
 
@@ -1096,8 +1112,10 @@ EXEC OBTER_DADOS_CLIENTE_PRODUTO(5); -- como solicitado pela disciplina precisa 
 -- com numero maior de registros que existem na tabela)
 EXEC OBTER_DADOS_CLIENTE_PRODUTO(10);
 
+/* ---------------------------------------------------------------------------------------------------- */
 
 /*
+------------------------- SEGUNDA PROCEDURE -------------------------
 Historico_Cliente_Detalhado: Este procedimento mostra um relatório detalhado sobre o histórico de compras dos clientes, 
 exibindo a data da compra atual,  a data da compra anterior e a data da próxima compra. 
 Se não houver dados para a compra anterior ou a próxima, ele exibe "Vazio".
@@ -1159,14 +1177,17 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Nenhum dado encontrado no histórico de compras.');
     WHEN VALUE_ERROR THEN
         DBMS_OUTPUT.PUT_LINE('Erro: Valor inesperado encontrado ao processar os dados.');
-    WHEN TOO_MANY_ROWS THEN
-        DBMS_OUTPUT.PUT_LINE('Erro: Mais linhas retornadas do que o esperado.');
+    WHEN ACCESS_INTO_NULL THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Tentativa de acessar um valor nulo em um objeto.');
+    WHEN CURSOR_ALREADY_OPEN THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: O cursor já está aberto.');
     WHEN INVALID_NUMBER THEN
         DBMS_OUTPUT.PUT_LINE('Erro: ORA-01722: número inválido');
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro ao processar o histórico de compras: ' || SQLERRM);
 END;
 
+------------------------- TESTES DA PROCEDURE: historico_cliente_detalhado -------------------------
 -- Execução do procedimento Historico_Cliente_Detalhado (COM SUCESSO)
 EXEC Historico_Cliente_Detalhado;
 
@@ -1185,10 +1206,11 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro: ' || SQLERRM);
 END;
 
+/* ---------------------------------------------------------------------------------------------------- */
 
--- TRIGGERS (30 PONTOS)
+-- -------------------------TRIGGER (30 PONTOS)-------------------------
 /* 
-CREATE TABELA AUDITORIA
+------------------------- CREATE TABELA AUDITORIA -------------------------
 */
 DROP TABLE auditoria CASCADE CONSTRAINTS;
 CREATE TABLE Auditoria (
@@ -1253,7 +1275,7 @@ BEGIN
 END;
 
 /*
-    Blocos para testar o trigger
+    ------------------------- Blocos para testar o trigger -------------------------
 */
 
 -- TESTE TRIGGER -> INSERT
@@ -1269,7 +1291,6 @@ BEGIN
         WHERE nome_tabela = 'Produto' 
           AND operacao = 'INSERT'
     ) LOOP
-        -- Imprimir as informações do registro com formatação melhorada
         DBMS_OUTPUT.PUT_LINE('----------------------------------------');
         DBMS_OUTPUT.PUT_LINE('Nome da Tabela   : ' || r.nome_tabela);
         DBMS_OUTPUT.PUT_LINE('Operação          : ' || r.operacao);
