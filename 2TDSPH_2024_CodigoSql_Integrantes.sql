@@ -1274,7 +1274,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Nome da Tabela   : ' || r.nome_tabela);
         DBMS_OUTPUT.PUT_LINE('Operação          : ' || r.operacao);
         DBMS_OUTPUT.PUT_LINE('Usuário           : ' || r.usuario);
-        DBMS_OUTPUT.PUT_LINE('Data da Operação  : ' || TO_CHAR(r.data_operacao, 'YYYY-MM-DD HH24:MI:SS'));
+        DBMS_OUTPUT.PUT_LINE('Data da Operação  : ' || TO_CHAR(r.data_operacao, 'YYYY-MM-DD'));
         DBMS_OUTPUT.PUT_LINE('Dados Antigos     : ' || NVL(r.dados_antigos, 'NENHUM DADO ANTERIOR'));
         DBMS_OUTPUT.PUT_LINE('Dados Novos       : ' || NVL(r.dados_novos, 'Nenhum dado novo'));
         DBMS_OUTPUT.PUT_LINE('----------------------------------------');
@@ -1299,7 +1299,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Nome da Tabela   : ' || r.nome_tabela);
         DBMS_OUTPUT.PUT_LINE('Operação          : ' || r.operacao);
         DBMS_OUTPUT.PUT_LINE('Usuário           : ' || r.usuario);
-        DBMS_OUTPUT.PUT_LINE('Data da Operação  : ' || TO_CHAR(r.data_operacao, 'YYYY-MM-DD HH24:MI:SS'));
+        DBMS_OUTPUT.PUT_LINE('Data da Operação  : ' || TO_CHAR(r.data_operacao, 'YYYY-MM-DD'));
         DBMS_OUTPUT.PUT_LINE('Dados Antigos     : ' || r.dados_antigos);
         DBMS_OUTPUT.PUT_LINE('Dados Novos       : ' || r.dados_novos);
         DBMS_OUTPUT.PUT_LINE('----------------------------------------');
@@ -1323,7 +1323,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Nome da Tabela   : ' || r.nome_tabela);
         DBMS_OUTPUT.PUT_LINE('Operação          : ' || r.operacao);
         DBMS_OUTPUT.PUT_LINE('Usuário           : ' || r.usuario);
-        DBMS_OUTPUT.PUT_LINE('Data da Operação  : ' || TO_CHAR(r.data_operacao, 'YYYY-MM-DD HH24:MI:SS'));
+        DBMS_OUTPUT.PUT_LINE('Data da Operação  : ' || TO_CHAR(r.data_operacao, 'YYYY-MM-DD'));
         DBMS_OUTPUT.PUT_LINE('Dados Antigos     : ' || r.dados_antigos);
         DBMS_OUTPUT.PUT_LINE('Dados Novos       : ' || r.dados_novos || 'NAO CONTEM (DADOS DELETADOS)');
         DBMS_OUTPUT.PUT_LINE('----------------------------------------');
