@@ -907,12 +907,52 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro ao converter dados para JSON: ' || SQLERRM);
 END;
 
--- TESTE: da funcao converte_json_func (com sucesso)
+-- TESTE: da funcao converte_json_func similar a nossa procedure (com sucesso)
+DECLARE
+    c_cliente_produto SYS_REFCURSOR;
+    v_json_resultado VARCHAR2(32767);
+BEGIN
+    OPEN c_cliente_produto FOR
+        SELECT c.idCliente, c.nome, c.telefone, c.email, c.idade,
+               p.idProduto, p.nomeProduto, p.categoriaProduto, p.valorProduto
+        FROM Cliente c
+        JOIN Cliente_Produto cp ON c.idCliente = cp.idCliente
+        JOIN Produto p ON cp.idProduto = p.idProduto;
 
+    v_json_resultado := converte_json_func(c_cliente_produto);
 
+    DBMS_OUTPUT.PUT_LINE('Resultado em JSON:');
+    DBMS_OUTPUT.PUT_LINE(v_json_resultado);
 
+    CLOSE c_cliente_produto;
+END;
 
+-- TESTE: da funcao converte_json_fun (CAI NA EXCEPTION VALUE_ERROR)
+DECLARE
+    -- Cursor para simular um erro ao converter dados (neste caso, idade será um VARCHAR)
+    c_cliente_produto SYS_REFCURSOR;
+    v_json_resultado VARCHAR2(32767);
+BEGIN
+    -- Abrir o cursor -> intencionalmente retorna um erro (idade sendo passada como VARCHAR)
+    OPEN c_cliente_produto FOR
+        SELECT c.idCliente, c.nome, c.telefone, c.email, TO_CHAR(c.idade, 'A999') AS idade, 
+               p.idProduto, p.nomeProduto, p.categoriaProduto, p.valorProduto
+        FROM Cliente c
+        JOIN Cliente_Produto cp ON c.idCliente = cp.idCliente
+        JOIN Produto p ON cp.idProduto = p.idProduto;
+        
+    -- Chamar a função e capturar o resultado JSON (deve gerar um erro de VALUE_ERROR)
+    v_json_resultado := converte_json_func(c_cliente_produto);
 
+    -- Exibir o resultado JSON no DBMS_OUTPUT (não deve chegar aqui por causa do erro)
+    DBMS_OUTPUT.PUT_LINE('Resultado em JSON:');
+    DBMS_OUTPUT.PUT_LINE(v_json_resultado);
+
+    CLOSE c_cliente_produto;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro durante o teste: ' || SQLERRM);
+END;
 
 /*
 calcular_compras_por_categoria : calcula manualmente as compras por categoria e retorna um cursor com os resultados. 
@@ -948,6 +988,10 @@ EXCEPTION
         RETURN 'Nenhuma categoria encontrada.';
     WHEN VALUE_ERROR THEN
         RETURN 'Erro: Valor inesperado encontrado ao processar as compras.';
+    WHEN INVALID_NUMBER THEN
+        RETURN 'Erro: Tentativa de conversão de string para número inválido.';
+    WHEN INVALID_CURSOR THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Cursor inválido detectado.');
     WHEN OTHERS THEN
         RETURN 'Erro ao processar as compras: ' || SQLERRM;
 END calcular_compras_por_categoria;
@@ -965,19 +1009,45 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro ao testar a função: ' || SQLERRM);
 END;
 
--- TESTE: da funcao calcular_compras_por_categoria (que caia na exception INVALID_CURSOR)
+-- TESTE: da função calcular_compras_por_categoria (CAI NA EXCEPTION INVALID_CURSOR)
+DECLARE
+    v_cursor SYS_REFCURSOR;
+    v_categoriaProduto Produto.categoriaProduto%TYPE;
+    v_total_compras NUMBER;
+    v_resultado VARCHAR2(4000);
+BEGIN
+    OPEN v_cursor FOR SELECT categoriaProduto FROM Produto;
+    CLOSE v_cursor; -- Fechar o cursor antes de utilizá-lo
 
+    -- Agora tentar usar o cursor fechado (isso deve gerar INVALID_CURSOR)
+    LOOP
+        FETCH v_cursor INTO v_categoriaProduto;
+        EXIT WHEN v_cursor%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE(v_categoriaProduto);
+    END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('Deveria ter dado erro aqui.');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: ' || SQLERRM);
+END;
 
 
 
 -- PROCEDURES (30 PONTOS)
 /* 
 obter_dados_cliente_produto: Este procedimento é responsável por recuperar dados de 
-clientes e produtos a partir de tabelas relacionadas (JOIN), converter esses dados em uma string JSON
+clientes e produtos a partir de tabelas relacionadas (JOIN), converter esses dados em uma string JSON.
+Ele precisa retornar no minimo 5 registros solicitado pela disciplina (usado como parametro)
 */
-CREATE OR REPLACE PROCEDURE obter_dados_cliente_produto IS
+CREATE OR REPLACE PROCEDURE obter_dados_cliente_produto (p_min_registros IN NUMBER) IS
     v_cursor SYS_REFCURSOR;
     v_json VARCHAR2(32767);
+    v_contagem NUMBER;
+    
+    e_registros_insuficientes EXCEPTION;
+    v_mensagem_registros_insuficientes VARCHAR2(100) := 'Número de registros insuficiente.';
+
 BEGIN
     OPEN v_cursor FOR
         SELECT c.idCliente, c.nome, c.telefone, c.email, c.idade,
@@ -986,11 +1056,29 @@ BEGIN
         JOIN Cliente_Produto cp ON c.idCliente = cp.idCliente
         JOIN Produto p ON cp.idProduto = p.idProduto;
 
-    v_json := converte_json_func(v_cursor);
+    SELECT COUNT(*)
+    INTO v_contagem
+    FROM (
+        SELECT 1
+        FROM Cliente c
+        JOIN Cliente_Produto cp ON c.idCliente = cp.idCliente
+        JOIN Produto p ON cp.idProduto = p.idProduto
+    );
+
+    --  mínimo requerido (solicitado pela disciplina)
+    IF v_contagem < p_min_registros THEN
+        RAISE e_registros_insuficientes;
+    ELSE
+        v_json := converte_json_func(v_cursor);
+    END IF;
     
     DBMS_OUTPUT.PUT_LINE(v_json);
 
 EXCEPTION
+    WHEN e_registros_insuficientes THEN
+        DBMS_OUTPUT.PUT_LINE(v_mensagem_registros_insuficientes);
+        v_json := '{"Erro": "Número de registros insuficiente."}'; -- Exception personalizada
+        DBMS_OUTPUT.PUT_LINE(v_json);
     WHEN NO_DATA_FOUND THEN
         DBMS_OUTPUT.PUT_LINE('Nenhum dado encontrado.');
     WHEN TOO_MANY_ROWS THEN
@@ -1000,8 +1088,14 @@ EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro inesperado: ' || SQLERRM);
 END;
--- Executa a procedure OBTER_DADOS_CLIENTE_PRODUTO
-EXEC OBTER_DADOS_CLIENTE_PRODUTO;
+-- Executa a procedure OBTER_DADOS_CLIENTE_PRODUTO (COM SUCESSO)
+EXEC OBTER_DADOS_CLIENTE_PRODUTO(5); -- como solicitado pela disciplina precisa retornar no minimo 5 valores
+
+
+-- TESTE: a procedure OBTER_DADOS_CLIENTE_PRODUTO -> Simular erro (passagem de paremetros 
+-- com numero maior de registros que existem na tabela)
+EXEC OBTER_DADOS_CLIENTE_PRODUTO(10);
+
 
 /*
 Historico_Cliente_Detalhado: Este procedimento mostra um relatório detalhado sobre o histórico de compras dos clientes, 
@@ -1025,9 +1119,7 @@ CREATE OR REPLACE PROCEDURE Historico_Cliente_Detalhado AS
     
 BEGIN
     OPEN c_historico;
-    
     FETCH c_historico INTO v_idHistCompra, v_idCliente, v_idProduto, v_dataCompraProduto;
-    
     IF c_historico%NOTFOUND THEN
         DBMS_OUTPUT.PUT_LINE('Nenhum dado encontrado no histórico de compras.');
         CLOSE c_historico;
@@ -1069,12 +1161,29 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Erro: Valor inesperado encontrado ao processar os dados.');
     WHEN TOO_MANY_ROWS THEN
         DBMS_OUTPUT.PUT_LINE('Erro: Mais linhas retornadas do que o esperado.');
+    WHEN INVALID_NUMBER THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: ORA-01722: número inválido');
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro ao processar o histórico de compras: ' || SQLERRM);
 END;
 
--- Execução do procedimento Historico_Cliente_Detalhado
+-- Execução do procedimento Historico_Cliente_Detalhado (COM SUCESSO)
 EXEC Historico_Cliente_Detalhado;
+
+-- TESTE: procedimento Historico_Cliente_Detalhado que caia na EXCEPTION (INVALID NUMBER)
+BEGIN
+    INSERT INTO Historico_Cliente (idHistCompra, idCliente, idProduto, dataCompraProduto)
+        VALUES (999, 'texto_invalido', 1, TO_DATE('2024-02-20', 'YYYY-MM-DD')); -- Valor não numérico em idCliente
+
+    Historico_Cliente_Detalhado;
+    
+    DELETE FROM Historico_Cliente WHERE idHistCompra = 999;
+    
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: ' || SQLERRM);
+END;
 
 
 -- TRIGGERS (30 PONTOS)
@@ -1244,6 +1353,5 @@ END;
 
 
 SELECT * FROM Auditoria;
-SELECT * FROM produto;
 SET SERVEROUTPUT ON;
 SET VERIFY OFF;
