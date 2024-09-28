@@ -2,12 +2,15 @@
 
 > Projeto desenvolvido durante as **Sprints 1, 2 e 3** da matéria **'MASTERING RELATIONAL AND NON-RELATIONAL DATABASE'**.
 
+> Código completo disponível [aqui](2TDSPH_2024_CodigoSql_Integrantes.sql).
+
 ---
 
 ### 🚀 Sprint 1 - Nota: **100** 🌟
 - **📊 Criação de DER/MER**: Desenvolvimento do Diagrama de Entidade-Relacionamento e Modelo Entidade-Relacionamento, definindo a estrutura do banco de dados.
 - **🏗️ DDL**: Implementação da Linguagem de Definição de Dados para criar as tabelas e relacionamentos no banco de dados.
 - **🔄 Blocos Anônimos de Consultas**: Criação de blocos anônimos para realizar consultas dinâmicas e manipulações de dados.
+> Acesse os scripts da Sprint 1 [aqui](scripts/sprint1).
 
 ---
 
@@ -17,7 +20,7 @@
 - **⚙️ Procedures (Insert, Update, Delete)**: Criação de procedimentos armazenados para operações básicas de manipulação de dados.
 - **🔄 Procedures com Join e Cursor**: Implementação de procedimentos que utilizam joins e cursores para manipulação avançada de dados.
 - **🔄 Procedures com funções, Inner Join, Order By, Sum/Count**: Criação de procedimentos complexos que combinam funções e agregações para relatórios.
-
+> Acesse os scripts da Sprint 2 [aqui](scripts/sprint2).
 ---
 
 ### 🚀 Sprint 3 - Nota: **100** 🌟
@@ -34,7 +37,7 @@
 
 - **Documentação (10 pontos)**
   - 📄 **Entrega da Documentação**: Preparação e entrega da documentação detalhada do projeto, incluindo explicações sobre as implementações realizadas e a estrutura do banco de dados.
-
+> Acesse os scripts da Sprint 3 [aqui](scripts/sprint3).
 ---
 
 ### 🗂️ Modelagem
