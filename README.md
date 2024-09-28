@@ -67,14 +67,14 @@ Aqui estão os membros do grupo que participaram durante desenvolvimento destas 
 * **RM 552258 - Laís Alves da Silva Cruz**
   - Turma: 2TDSPH
   - Responsável: Banco de Dados & DevOps
-
-* **RM 99675 – Lucca Raphael Pereira dos Santos**
-  - Turma: 2TDSPW
-  - Responsável: IA/IoT
-
+    
 * **RM 97916 – Fabricio Torres Antonio**
   - Turma: 2TDSPH
   - Responsável: QA
+
+* **RM 99675 – Lucca Raphael Pereira dos Santos**
+  - Turma: 2TDSPZ
+  - Responsável: IA/IoT
 
 <table>
   <tr>
