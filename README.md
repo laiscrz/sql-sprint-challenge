@@ -41,17 +41,41 @@
 ---
 
 ### 🗂️ Modelagem
-**Oracle Data Modeler (DER/MER):** Utilizado para criar e gerenciar modelos de dados, facilitando a visualização e a estruturação do banco de dados.
+
+**Oracle Data Modeler (DER/MER):**  Utilizado para criar e gerenciar modelos de dados, o Oracle Data Modeler facilita a visualização e a estruturação do banco de dados, permitindo um desenvolvimento e manutenção mais eficazes do esquema.
 
 ![Oracle Data Modeler](https://img.shields.io/badge/Oracle_Data_Modeler-F80000?style=for-the-badge&logo=oracle&logoColor=white)
 
+#### 🧩 Modelo Lógico
+
+Visualize a arquitetura do banco de dados no modelo lógico:
+
+<p align="center">
+  <img src="documents/der_mer_logico.png" alt="Diagrama Lógico" width="600" height="340">
+</p>
+
+
+#### 🧩 Modelo Físico
+
+Visualize a arquitetura do banco de dados no modelo físico:
+
+<p align="center">
+  <img src="documents/der_mer_fisico.png" alt="Diagrama Físico" width="600" height="340">
+</p>
+
+---
+
 ### 🌐 Banco de Dados
-**Oracle SQL :**  é um sistema de gerenciamento de banco de dados relacional (RDBMS) desenvolvido pela Oracle Corporation. 
+
+**Oracle SQL:** É um sistema de gerenciamento de banco de dados relacional (RDBMS) desenvolvido pela Oracle Corporation. Sua robustez e flexibilidade tornam-no uma escolha popular para aplicações empresariais.
 
 ![Oracle SQL](https://img.shields.io/badge/Oracle_SQL-F80000?style=for-the-badge&logo=oracle&logoColor=white)
 
-### 🖥️ IDE (Ambiente de Desenvolvimento Integrado):
-**Oracle SQL Developer**: Uma ferramenta gratuita da Oracle que oferece uma interface gráfica amigável para o desenvolvimento e gerenciamento de bancos de dados. Com funcionalidades como suporte a SQL e PL/SQL, relatórios, e visualização de dados, o SQL Developer facilita o trabalho de desenvolvedores e administradores de banco de dados.
+---
+
+### 🖥️ IDE (Ambiente de Desenvolvimento Integrado)
+
+**Oracle SQL Developer:** Uma ferramenta gratuita da Oracle que oferece uma interface gráfica amigável para o desenvolvimento e gerenciamento de bancos de dados. Com funcionalidades como suporte a SQL e PL/SQL, relatórios e visualização de dados, o SQL Developer facilita o trabalho de desenvolvedores e administradores de banco de dados.
 
 ![Oracle SQL DEVELOPER](https://img.shields.io/badge/Oracle_SQL_Developer-F80000?style=for-the-badge&logo=oracle&logoColor=white)
 
